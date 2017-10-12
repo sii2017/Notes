@@ -9,7 +9,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 	MSG msg;
 	WNDCLASS wndclass;
 
-	wndclass.style= CS_HREDRAW|CS_VREDRAW;
+	wndclass.style= CS_HREDRAW|CS_VREDRAW;	//这两个style意味着当窗口的大小水平或者垂直方向发生任何变化，windows都会强行刷新页面发送一个WM_PAINT消息
 	wndclass.lpfnWndProc= WndProc;
 	wndclass.cbClsExtra= 0;
 	wndclass.cbWndExtra= 0;
