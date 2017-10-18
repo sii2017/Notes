@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chpater 5", "Chpater 5.vcproj", "{EE79BBB2-1A0E-4694-873E-D3B56D7574B6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DEVCAPS1", "Chpater 5.vcproj", "{EE79BBB2-1A0E-4694-873E-D3B56D7574B6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SINEWAVE", "..\SINEWAVE\SINEWAVE.vcproj", "{C2F0D9AF-E45A-406D-98A1-E168272D6330}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{EE79BBB2-1A0E-4694-873E-D3B56D7574B6}.Debug|Win32.Build.0 = Debug|Win32
 		{EE79BBB2-1A0E-4694-873E-D3B56D7574B6}.Release|Win32.ActiveCfg = Release|Win32
 		{EE79BBB2-1A0E-4694-873E-D3B56D7574B6}.Release|Win32.Build.0 = Release|Win32
+		{C2F0D9AF-E45A-406D-98A1-E168272D6330}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C2F0D9AF-E45A-406D-98A1-E168272D6330}.Debug|Win32.Build.0 = Debug|Win32
+		{C2F0D9AF-E45A-406D-98A1-E168272D6330}.Release|Win32.ActiveCfg = Release|Win32
+		{C2F0D9AF-E45A-406D-98A1-E168272D6330}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
