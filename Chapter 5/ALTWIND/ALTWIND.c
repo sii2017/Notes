@@ -63,9 +63,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			apt[i].y=cyClient*aptFigure[i].y/100;
 		}
 		SetPolyFillMode(hdc, ALTERNATE);
-		Polygon(hdc, apt, 10);
+		Polygon(hdc, apt, 10);	//apt是10个点
 
-		for(i=0;i<10;i++)
+		for(i=0;i<10;i++)	//将apt的点水平向右移动一半
 		{
 			apt[i].x+= cxClient/2;
 		}
