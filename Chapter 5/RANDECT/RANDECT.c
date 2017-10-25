@@ -37,14 +37,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 
 	while(TRUE)
 	{
-		if(PeekMessage(&msg, NULL, 0,0, PM_REMOVE))
+		if(PeekMessage(&msg, NULL, 0,0, PM_REMOVE))	//如果队列里有消息则处理消息
 		{
 			if(msg.message == WM_QUIT)
 				break;
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		else
+		else	//如果消息队列里没有消息则画随机矩形
 			DrawRectangle(hwnd);
 	}
 	return msg.wParam;
@@ -52,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch(iMsg)
+	switch(iMsg)	//WM_PAINT让系统自动处理
 	{
 	case WM_SIZE:
 		cxClient= LOWORD(lParam);
