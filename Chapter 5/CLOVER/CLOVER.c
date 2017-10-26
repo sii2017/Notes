@@ -57,7 +57,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		cxClient= LOWORD(lParam);
 		cyClient= HIWORD(lParam);
-		hCursor= SetCursor(LoadCursor(NULL, IDC_WAIT));
+		hCursor= SetCursor(LoadCursor(NULL, IDC_WAIT));//显示等待的光标，现在的最新系统下是个圈圈，但是似乎由于运算速度过快，较少会出现。并保存之前的光标在句柄里
 		ShowCursor(TRUE);//显示光标
 
 		if(hRgnClip)
@@ -70,7 +70,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		hRgnTemp[4]= CreateRectRgn(0,0,1,1);//初始化一个坐标
 		hRgnTemp[5]= CreateRectRgn(0,0,1,1);
 		hRgnClip= CreateRectRgn(0,0,1,1);
-
+		//根据需要将区域连接起来
 		CombineRgn(hRgnTemp[4], hRgnTemp[0], hRgnTemp[1], RGN_OR);
 		CombineRgn(hRgnTemp[5], hRgnTemp[2], hRgnTemp[3], RGN_OR);
 		CombineRgn(hRgnClip, hRgnTemp[4], hRgnTemp[5],RGN_XOR);
@@ -78,7 +78,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		for(i=0;i<6;i++)
 			DeleteObject(hRgnTemp[i]);
 
-		SetCursor(hCursor);
+		SetCursor(hCursor);//使用之前保存的光标句柄，并恢复
 		ShowCursor(FALSE);
 		return 0;
 
@@ -86,7 +86,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		hdc= BeginPaint(hwnd, &ps);
 		
 		SetViewportOrgEx(hdc, cxClient/2, cyClient/2, NULL);
-		SelectClipRgn(hdc, hRgnClip);
+		SelectClipRgn(hdc, hRgnClip);//将区域放进设备内容hdc中
 		fRadius= _hypot(cxClient/2.0, cyClient/2.0);
 		for(fAngle= 0.0; fAngle<TWO_PI; fAngle+= TWO_PI/360)
 		{
@@ -97,7 +97,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(hwnd, &ps);
 		return 0;
 	case WM_DESTROY:
-		DeleteObject(hRgnClip);
+		DeleteObject(hRgnClip);//最后删除区域
 		PostQuitMessage(0);
 		return 0;
 	}
