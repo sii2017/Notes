@@ -130,7 +130,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc= BeginPaint(hwnd, &ps);
-		SelectObject(hdc, GetStockObject(SYSTEM_FIXED_FONT));
+		SelectObject(hdc, GetStockObject(SYSTEM_FIXED_FONT));	//使用等宽系统字体
 		SetBkMode(hdc, TRANSPARENT);	//通过将背景设定为透明，使字体与字体可以重叠显示，这里用作字体和下划线重叠显示。
 		//SetBkMode(hdc, OPAQUE);
 		TextOut(hdc, 0, 0, szTop, lstrlen(szTop));
