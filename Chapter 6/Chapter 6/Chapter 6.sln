@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 6", "Chapter 6.vcproj", "{03C3FDF1-8327-4A58-9BBD-996E72485EEB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SYSMETS4", "Chapter 6.vcproj", "{03C3FDF1-8327-4A58-9BBD-996E72485EEB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KEYVIEW1", "..\KEYVIEW1\KEYVIEW1.vcproj", "{CA85124F-D459-4265-8731-B1F83B7864C9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "STOCKFONT", "..\STOCKFONT\STOCKFONT.vcproj", "{EA187CA1-572A-47A0-B7D2-37CBEA00EB29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,14 @@ Global
 		{03C3FDF1-8327-4A58-9BBD-996E72485EEB}.Debug|Win32.Build.0 = Debug|Win32
 		{03C3FDF1-8327-4A58-9BBD-996E72485EEB}.Release|Win32.ActiveCfg = Release|Win32
 		{03C3FDF1-8327-4A58-9BBD-996E72485EEB}.Release|Win32.Build.0 = Release|Win32
+		{CA85124F-D459-4265-8731-B1F83B7864C9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CA85124F-D459-4265-8731-B1F83B7864C9}.Debug|Win32.Build.0 = Debug|Win32
+		{CA85124F-D459-4265-8731-B1F83B7864C9}.Release|Win32.ActiveCfg = Release|Win32
+		{CA85124F-D459-4265-8731-B1F83B7864C9}.Release|Win32.Build.0 = Release|Win32
+		{EA187CA1-572A-47A0-B7D2-37CBEA00EB29}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA187CA1-572A-47A0-B7D2-37CBEA00EB29}.Debug|Win32.Build.0 = Debug|Win32
+		{EA187CA1-572A-47A0-B7D2-37CBEA00EB29}.Release|Win32.ActiveCfg = Release|Win32
+		{EA187CA1-572A-47A0-B7D2-37CBEA00EB29}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
