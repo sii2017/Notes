@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "STOCKFONT", "..\STOCKFONT\S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KEYVIEW2", "..\KEYVIEW2\KEYVIEW2.vcproj", "{1C0CAC1B-574D-4DD0-B7CC-42A8D42E536A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TYPER", "..\TYPER\TYPER.vcproj", "{1D1348F0-D6FD-4590-9C99-DFFBE609610C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{1C0CAC1B-574D-4DD0-B7CC-42A8D42E536A}.Debug|Win32.Build.0 = Debug|Win32
 		{1C0CAC1B-574D-4DD0-B7CC-42A8D42E536A}.Release|Win32.ActiveCfg = Release|Win32
 		{1C0CAC1B-574D-4DD0-B7CC-42A8D42E536A}.Release|Win32.Build.0 = Release|Win32
+		{1D1348F0-D6FD-4590-9C99-DFFBE609610C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1D1348F0-D6FD-4590-9C99-DFFBE609610C}.Debug|Win32.Build.0 = Debug|Win32
+		{1D1348F0-D6FD-4590-9C99-DFFBE609610C}.Release|Win32.ActiveCfg = Release|Win32
+		{1D1348F0-D6FD-4590-9C99-DFFBE609610C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
