@@ -64,10 +64,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch(message)
 		{
 		case WM_CREATE:
-			SetScrollRange(hwnd, SB_VERT, 0, cFonts-1, TRUE);
+			SetScrollRange(hwnd, SB_VERT, 0, cFonts-1, TRUE);//设计一个滚动条，这里的滚动条不是用来滚动页面而是用来转换不同的文字。
 			return 0;
 		case WM_DISPLAYCHANGE:
-			InvalidateRect(hwnd, NULL, TRUE);
+			InvalidateRect(hwnd, NULL, TRUE);//如果分辨率改变则重新使画面无效使之刷新
 			return 0;
 		case WM_VSCROLL:
 			switch(LOWORD(wParam))
@@ -90,7 +90,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetScrollPos(hwnd, SB_VERT, iFont, TRUE);
 			InvalidateRect(hwnd, NULL, TRUE);
 			return 0;
-		case WM_KEYDOWN:
+		case WM_KEYDOWN://对一些滚动相关的按键进行处理
 			switch(wParam)
 			{
 			case VK_HOME: SendMessage(hwnd, WM_VSCROLL, SB_TOP, 0);break;
@@ -110,14 +110,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_PAINT:
 			hdc= BeginPaint(hwnd, &ps);
 			SelectObject(hdc, GetStockObject(stockfont[iFont].idStockFont));
-			GetTextFace(hdc, LF_FACESIZE, szFaceName);
+			GetTextFace(hdc, LF_FACESIZE, szFaceName);//得到字体样式名称
 			GetTextMetrics(hdc, &tm);
 			cxGrid= max(3*tm.tmAveCharWidth, 2*tm.tmMaxCharWidth);
 			cyGrid= tm.tmHeight +3;
 
 			TextOut(hdc, 0, 0, szBuffer, 
 				wsprintf(szBuffer, TEXT("%s: Face Name= %s, CharSet= %i"),
-				stockfont[iFont].szStockFont, szFaceName, tm.tmCharSet));
+				stockfont[iFont].szStockFont, szFaceName, tm.tmCharSet));	//由于版本问题szStockFont显示出的为乱码
 			SetTextAlign(hdc, TA_TOP|TA_CENTER);
 			//vertical and horizontal lines
 			for(i=0;i<17;i++)
