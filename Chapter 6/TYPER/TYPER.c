@@ -1,5 +1,5 @@
 #include <windows.h>
-#define BUFFER(x,y) *(pBuffer + y*cxBuffer + x)
+#define BUFFER(x,y) *(pBuffer + y*cxBuffer + x)//pBuffer的开头的地址+行数乘以一行字符的数量+不到一行字符的数量
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
@@ -57,6 +57,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_INPUTLANGCHANGE://输入法发生改变,即输入语言发生改变后则重新进行CREATE等。这是与上一个KEYVIEW1的区别
 		dwCharSet= wParam;
 	case WM_CREATE:
+		//自定字体，然后获得该字体的宽和高，删除并定义回原来的字体
 		hdc= GetDC(hwnd);
 		SelectObject(hdc, CreateFont(0,0,0,0,0,0,0,0,
 			dwCharSet, 0,0,0,FIXED_PITCH, NULL));
@@ -66,7 +67,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DeleteObject(SelectObject(hdc, GetStockObject(SYSTEM_FONT)));
 		ReleaseDC(hwnd, hdc);
 		//fall through
-	case WM_SIZE:
+	case WM_SIZE:	//如果最大化最小化甚至调整窗口，内容都会消失并且初始化
 		if(message== WM_SIZE)
 		{
 			cxClient= LOWORD(lParam);
@@ -81,11 +82,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pBuffer= (TCHAR*)malloc(cxBuffer*cyBuffer*sizeof(TCHAR));
 		for(y=0;y<cyBuffer;y++)
 			for(x=0;x<cxBuffer;x++)
-				BUFFER(x,y)= '';
-		xCaret= 0;
+				BUFFER(x,y)= ' ';
+		xCaret= 0;	//如果这里设置为0
 		yCaret= 0;
 
-		if(hwnd== GetFocus())
+		if(hwnd== GetFocus())	//判断是否获得焦点
 			SetCaretPos(xCaret*cxChar, yCaret*cyChar);
 		InvalidateRect(hwnd, NULL, TRUE);
 		return 0;
@@ -122,59 +123,89 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			xCaret= min(xCaret+1,cxBuffer-1);
 			break;
 		case VK_UP:
-			//写到这里
-
-	case WM_KEYUP:
-	case WM_CHAR:
-	case WM_DEADCHAR:
-	case WM_SYSKEYDOWN:
-	case WM_SYSKEYUP:
-	case WM_SYSCHAR:
-	case WM_SYSDEADCHAR:
-		//Rearange storage array
-		for(i=cLinesMax-1;i>0;i--)
-		{
-			pmsg[i]= pmsg[i-1];
+			yCaret= max(yCaret-1,0);
+			break;
+		case VK_DOWN:
+			yCaret= min(yCaret+1,cyBuffer-1);
+			break;
+		case VK_DELETE://删除光标目前所在的字符，这个功能现在已经不太用了2017-10-31
+			for(x=xCaret;x<cxBuffer-1;x++)
+				BUFFER(x,yCaret)=BUFFER(x+1,yCaret);
+			BUFFER(cxBuffer-1,yCaret)= ' ';
+			HideCaret(hwnd);
+			hdc= GetDC(hwnd);
+			SelectObject(hdc, CreateFont(0,0,0,0,0,0,0,0,dwCharSet,0,0,0,FIXED_PITCH,NULL));
+			TextOut(hdc, xCaret*cxChar, yCaret*cyChar,&BUFFER(xCaret, yCaret), cxBuffer-xCaret);
+			DeleteObject(SelectObject(hdc, GetStockObject(SYSTEM_FONT)));
+			ReleaseDC(hwnd, hdc);
+			ShowCaret(hwnd);
+			break;
 		}
-		//Store new message
-		pmsg[0].hwnd= hwnd;
-		pmsg[0].message= message;
-		pmsg[0].wParam= wParam;
-		pmsg[0].lParam= lParam;
+		SetCaretPos(xCaret*cxChar, yCaret*cyChar);
+		return 0;
+	case WM_CHAR:
+		for(i=0;i<(int)LOWORD(lParam);i++)
+		{
+			switch(wParam)
+			{
+			case '\b'://backspace
+				if(xCaret>0)
+				{
+					xCaret--;
+					SendMessage(hwnd, WM_KEYDOWN, VK_DELETE, 1);
+				}
+				break;
+			case '\t'://tab
+				do{ 
+					SendMessage(hwnd, WM_CHAR, ' ', 1);
+				}
+				while(xCaret%8!=0);
+				break;
+			case '\n'://line feed
+				if(++yCaret==cyBuffer)
+					yCaret==0;
+				break;
+			case '\r'://carriage return 
+				xCaret=0;
+				if(++yCaret==cyBuffer)
+					yCaret=0;
+				break;
+			case '\x1B'://escape
+				for(y=0;y<cyBuffer;y++)
+					for(x=0;x<cxBuffer;x++)
+						BUFFER(x,y)=' ';
+				xCaret=0;
+				yCaret=0;
 
-		cLines= min(cLines+1, cLinesMax);
-		//Scroll up the display
-		ScrollWindow(hwnd, 0, -cyChar, &rectScroll, &rectScroll);
-		break;
+				InvalidateRect(hwnd, NULL, FALSE);
+				break;
+			default://character codes
+				BUFFER(xCaret,yCaret)=(TCHAR)wParam;
+				HideCaret(hwnd);
+				hdc=GetDC(hwnd);
+				SelectObject(hdc, CreateFont(0,0,0,0,0,0,0,0,dwCharSet,0,0,0,FIXED_PITCH,NULL));
+				TextOut(hdc, xCaret*cxChar, yCaret*cyChar,&BUFFER(xCaret, yCaret), 1);
+				DeleteObject(SelectObject(hdc, GetStockObject(SYSTEM_FONT)));
+				ReleaseDC(hwnd, hdc);
+				ShowCaret(hwnd);
+
+				if(++xCaret==cxBuffer)
+				{
+					xCaret=0;
+					if(++yCaret==cyBuffer)
+						yCaret=0;
+				}
+				break;
+			}
+		}
+		SetCaretPos(xCaret*cxChar, yCaret*cyChar);
+		return 0;
 	case WM_PAINT:
 		hdc= BeginPaint(hwnd, &ps);
 		SelectObject(hdc, CreateFont(0,0,0,0,0,0,0,0,
 			dwCharSet, 0,0,0,FIXED_PITCH, NULL));	//创建字体
-		SetBkMode(hdc, TRANSPARENT);	//通过将背景设定为透明，使字体与字体可以重叠显示，这里用作字体和下划线重叠显示。
-		//SetBkMode(hdc, OPAQUE);
-		TextOut(hdc, 0, 0, szTop, lstrlen(szTop));
-		TextOut(hdc, 0, 0, szUnd, lstrlen(szUnd));
-
-		for(i=0;i<min(cLines, cyClient/cyChar-1);i++)
-		{
-			iType= pmsg[i].message==WM_CHAR||
-				pmsg[i].message==WM_SYSCHAR||
-				pmsg[i].message==WM_DEADCHAR||
-				pmsg[i].message==WM_SYSDEADCHAR;
-
-			GetKeyNameText(pmsg[i].lParam, szKeyName, sizeof(szKeyName)/sizeof(TCHAR));
-
-			TextOut(hdc, 0, (cyClient/cyChar-1-i)*cyChar, szBuffer, 
-				wsprintf(szBuffer, szFormat[iType], szMessage[pmsg[i].message- WM_KEYFIRST],
-				pmsg[i].wParam, (PTSTR)(iType?TEXT(" "):szKeyName),
-				(TCHAR)(iType?pmsg[i].wParam:' '),
-				LOWORD(pmsg[i].lParam),
-				HIWORD(pmsg[i].lParam)&0xFF,
-				0x01000000&pmsg[i].lParam?szYes:szNo,
-				0x20000000&pmsg[i].lParam?szYes:szNo,
-				0x40000000&pmsg[i].lParam?szDown:szUp,
-				0x80000000&pmsg[i].lParam?szUp:szDown));
-		}
+		for(y=0;y<cyBuffer;y++)
+			TextOut(hdc, 0, y*cyChar, &BUFFER(0,y), cxBuffer);
 		DeleteObject(SelectObject(hdc, GetStockObject(SYSTEM_FONT)));	//重新设置成系统字体并且通过返回值删除上一个自定义自己的gdi对象
 		EndPaint(hwnd, &ps);
 		return 0;
@@ -186,5 +217,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 //总结
-//SetBkMode(hdc, TRANSPARENT);使输出字体的背景为透明，所以以下两行字体可以互相重叠。
-//wsprintf函数即将需要的内容写到了szBuffer里面，又返回了大小，就是初次看的时候不太容易理解。
+//这是个简单的文字编辑器，对于部分位移键可以使光标移动，根据光标的位置进行输入，根据光标的位置进行一些功能键比如空格回车以及删除。
+//xCaret yCaret 就是光标的坐标，当然如果用他当作坐标进行输入分别需要乘以cxChar和cyChar作为字体的长度宽度
+//尚不知到自定义字体的含义。
