@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter 7", "Chapter 7.vcproj", "{B0892BD9-6D6A-4305-BDF3-FDE7EC8B453D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CONNECT", "Chapter 7.vcproj", "{B0892BD9-6D6A-4305-BDF3-FDE7EC8B453D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CHECKER1", "..\CHECKER1\CHECKER1.vcproj", "{A3EF86CE-D166-44A0-98F5-FDAB3F745647}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{B0892BD9-6D6A-4305-BDF3-FDE7EC8B453D}.Debug|Win32.Build.0 = Debug|Win32
 		{B0892BD9-6D6A-4305-BDF3-FDE7EC8B453D}.Release|Win32.ActiveCfg = Release|Win32
 		{B0892BD9-6D6A-4305-BDF3-FDE7EC8B453D}.Release|Win32.Build.0 = Release|Win32
+		{A3EF86CE-D166-44A0-98F5-FDAB3F745647}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3EF86CE-D166-44A0-98F5-FDAB3F745647}.Debug|Win32.Build.0 = Debug|Win32
+		{A3EF86CE-D166-44A0-98F5-FDAB3F745647}.Release|Win32.ActiveCfg = Release|Win32
+		{A3EF86CE-D166-44A0-98F5-FDAB3F745647}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
