@@ -63,7 +63,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		for(x=0;x<DIVISIONS;x++)
 			for(y=0;y<DIVISIONS;y++)
-				hwndChild[x][y]= CreateWindow(szChildClass, NULL, WS_CHILDWINDOW|WS_VISIBLE, 0,0,0,0, hwnd, (HMENU)(y<<8|x), (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);	//建立子窗口
+				hwndChild[x][y]= CreateWindow(szChildClass, NULL, WS_CHILDWINDOW|WS_VISIBLE, 0,0,0,0, hwnd, (HMENU)(y<<8|x), (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE), NULL);	//在同一个地方建立所有子窗口
+		return 0;
+	case WM_SIZE:
+		cxBlock= LOWORD(lParam)/DIVISIONS;
+		cyBlock= HIWORD(lParam)/DIVISIONS;
+		for(x=0; x<DIVISIONS; x++)	//将子窗口分别移动到各个位置
+			for(y=0; y<DIVISIONS; y++)
+				MoveWindow(hwndChild[x][y], x*cxBlock, y*cyBlock, cxBlock, cyBlock, TRUE);
 		return 0;
 	case WM_LBUTTONDOWN:
 		MessageBeep(0);
@@ -108,3 +115,6 @@ LRESULT CALLBACK ChildWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	}
 		return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
+//总结：
+//建立两种窗口注册类型，主窗口建立以后建立子窗口，再移动子窗口的位置。
