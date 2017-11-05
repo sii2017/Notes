@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CHECKER3", "..\CHECKER3\CHE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CHECKER4", "..\CHECKER4\CHECKER4.vcproj", "{53EFCDDA-2D64-4928-BF54-B3C4D5842F8B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BLOCKOUT1", "..\BLOCKOUT1\BLOCKOUT1.vcproj", "{28545897-BCB6-41F1-9FFC-E74E2068BB6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{53EFCDDA-2D64-4928-BF54-B3C4D5842F8B}.Debug|Win32.Build.0 = Debug|Win32
 		{53EFCDDA-2D64-4928-BF54-B3C4D5842F8B}.Release|Win32.ActiveCfg = Release|Win32
 		{53EFCDDA-2D64-4928-BF54-B3C4D5842F8B}.Release|Win32.Build.0 = Release|Win32
+		{28545897-BCB6-41F1-9FFC-E74E2068BB6F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28545897-BCB6-41F1-9FFC-E74E2068BB6F}.Debug|Win32.Build.0 = Debug|Win32
+		{28545897-BCB6-41F1-9FFC-E74E2068BB6F}.Release|Win32.ActiveCfg = Release|Win32
+		{28545897-BCB6-41F1-9FFC-E74E2068BB6F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

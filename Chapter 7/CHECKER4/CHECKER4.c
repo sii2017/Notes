@@ -178,3 +178,4 @@ LRESULT CALLBACK ChildWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 
 //总结：
 //建立两种窗口注册类型，主窗口建立以后建立子窗口，再移动子窗口的位置。
+//仅仅在键盘KEYDOWN的情况下进行输入焦点的切换，当子窗口KEYDOWN后发给父窗口，然后由父窗口根据子窗口的id进行SETFOCUS
