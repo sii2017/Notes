@@ -41,7 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	return msg.wParam;
 }
 
-void DrawBoxOutline(HWND hwnd, POINT ptBeg, POINT ptEnd)
+void DrawBoxOutline(HWND hwnd, POINT ptBeg, POINT ptEnd)//根据平移鼠标画空的方框
 {
 	HDC hdc;
 	hdc= GetDC(hwnd);
@@ -53,7 +53,7 @@ void DrawBoxOutline(HWND hwnd, POINT ptBeg, POINT ptEnd)
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	static BOOL fBlocking, fValidBox;
+	static BOOL fBlocking, fValidBox;	//fBlocking代表鼠标down的时候，fValidBox代表鼠标up的时候
 	static POINT ptBeg, ptEnd, ptBoxBeg, ptBoxEnd;
 	HDC hdc;
 	PAINTSTRUCT ps;
@@ -65,8 +65,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		DrawBoxOutline(hwnd, ptBeg, ptEnd);
 
-		SetCursor(LoadCursor(NULL, IDC_CROSS));
-		fBlocking= TRUE;
+		SetCursor(LoadCursor(NULL, IDC_CROSS));	//十字鼠标箭头
+		fBlocking= TRUE;//按下状态该bool为true
 		return 0;
 
 	case WM_MOUSEMOVE:
@@ -85,8 +85,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			DrawBoxOutline(hwnd, ptBeg, ptEnd);
 			ptBoxBeg= ptBeg;
-			ptBoxBeg.x= LOWORD(lParam);
-			ptBoxBeg.y= HIWORD(lParam);
+			ptBoxEnd.x= LOWORD(lParam);
+			ptBoxEnd.y= HIWORD(lParam);
 
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
 			fBlocking= FALSE;
