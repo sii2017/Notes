@@ -45,7 +45,7 @@ void DrawBoxOutline(HWND hwnd, POINT ptBeg, POINT ptEnd)//根据平移鼠标画空的方框
 {
 	HDC hdc;
 	hdc= GetDC(hwnd);
-	SetROP2(hdc, R2_NOT);
+	SetROP2(hdc, R2_NOT);//设定前景色为后景色的反色，即白色变为黑色作为矩形的颜色
 	SelectObject(hdc, GetStockObject(NULL_BRUSH));
 	Rectangle(hdc, ptBeg.x, ptBeg.y, ptEnd.x, ptEnd.y);
 	ReleaseDC(hwnd, hdc);
