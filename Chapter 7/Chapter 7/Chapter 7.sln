@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BLOCKOUT1", "..\BLOCKOUT1\B
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BLOCKOUT2", "..\BLOCKOUT2\BLOCKOUT2.vcproj", "{1B63FD9C-28C3-4050-AAB3-2C6E5F7E4534}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SYSMETS", "..\SYSMETS\SYSMETS.vcproj", "{BF08714A-70DB-41E2-8115-E6A43CD40AF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,10 @@ Global
 		{1B63FD9C-28C3-4050-AAB3-2C6E5F7E4534}.Debug|Win32.Build.0 = Debug|Win32
 		{1B63FD9C-28C3-4050-AAB3-2C6E5F7E4534}.Release|Win32.ActiveCfg = Release|Win32
 		{1B63FD9C-28C3-4050-AAB3-2C6E5F7E4534}.Release|Win32.Build.0 = Release|Win32
+		{BF08714A-70DB-41E2-8115-E6A43CD40AF3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BF08714A-70DB-41E2-8115-E6A43CD40AF3}.Debug|Win32.Build.0 = Debug|Win32
+		{BF08714A-70DB-41E2-8115-E6A43CD40AF3}.Release|Win32.ActiveCfg = Release|Win32
+		{BF08714A-70DB-41E2-8115-E6A43CD40AF3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
