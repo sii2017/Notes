@@ -94,18 +94,18 @@ void DisplayColon(HDC hdc)
 	Polygon(hdc, ptColon[0], 4);
 	Polygon(hdc, ptColon[1], 4);
 
-	OffsetWindowOrgEx(hdc, -12, 0, NULL);
+	OffsetWindowOrgEx(hdc, -12, 0, NULL);	//平移窗口原点
 }
 
-void DisplayTime(HDC hdc, BOOL f24Hour, BOOL fSuppress)
+void DisplayTime(HDC hdc, BOOL f24Hour, BOOL fSuppress)	//显示时间
 {
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	if(f24Hour)
-		DisplayTwoDigits(hdc, st.wSecond, FALSE);
+		DisplayTwoDigits(hdc, st.wHour, FALSE);
 	else
-
 		DisplayTwoDigits(hdc, (st.wHour%=12)?st.wHour:12, fSuppress);
+
 	DisplayColon(hdc);
 	DisplayTwoDigits(hdc, st.wMinute, FALSE);
 	DisplayColon(hdc);
