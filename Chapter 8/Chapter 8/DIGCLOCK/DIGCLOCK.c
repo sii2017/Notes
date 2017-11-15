@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 void DisplayDigit(HDC hdc, int iNumber)
 {
-	static BOOL fSevenSegment[10][7]= {
+	static BOOL fSevenSegment[10][7]= {	//代表一个数字字体“日”的七条框是否需要输出
 		1,1,1,0,1,1,1,	//0
 		0,0,1,0,0,1,0,	//1
 		1,0,1,1,1,0,1,	//2
@@ -57,7 +57,7 @@ void DisplayDigit(HDC hdc, int iNumber)
 		1,1,1,1,0,1,1	//9
 	};
 
-	static POINT ptSegment[7][6]={
+	static POINT ptSegment[7][6]={	//代表一个数字字体“日”的七条框的输出坐标。
 		7,6,11,2,31,2,35,6,31,10,11,10,
 		6,7,10,11,10,31,6,35,2,31,2,11,
 		36,7,40,11,40,31,36,35,32,31,32,11,
@@ -75,16 +75,16 @@ void DisplayDigit(HDC hdc, int iNumber)
 	}
 }
 
-void DisplayTwoDigits(HDC hdc, int iNumber, BOOL fSuppress)
+void DisplayTwoDigits(HDC hdc, int iNumber, BOOL fSuppress)	//输出时间的数字
 {
 	if(!fSuppress||(iNumber/10!=0))
 		DisplayDigit(hdc, iNumber/10);
 	OffsetWindowOrgEx(hdc, -42, 0, NULL);
 	DisplayDigit(hdc, iNumber%10);
-	OffsetWindowOrgEx(hdc, -42, 0, NULL);
+	OffsetWindowOrgEx(hdc, -42, 0, NULL);	//平移窗口原点
 }
 
-void DisplayColon(HDC hdc)
+void DisplayColon(HDC hdc)	//时间的两个冒号
 {
 	POINT ptColon[2][4]= {
 		2,21,6,17,10,21,6,15,
@@ -97,7 +97,7 @@ void DisplayColon(HDC hdc)
 	OffsetWindowOrgEx(hdc, -12, 0, NULL);	//平移窗口原点
 }
 
-void DisplayTime(HDC hdc, BOOL f24Hour, BOOL fSuppress)	//显示时间
+void DisplayTime(HDC hdc, BOOL f24Hour, BOOL fSuppress)	//分别输出当时的小时，分，秒
 {
 	SYSTEMTIME st;
 	GetLocalTime(&st);
@@ -127,10 +127,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hBrushRed= CreateSolidBrush(RGB(255,0,0));
 		SetTimer(hwnd, ID_TIMER, 1000, NULL);
 	case WM_SETTINGCHANGE:
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ITIME, szBuffer, 2);
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ITIME, szBuffer, 2);	//确定是12小时制还是24小时制
 		f24Hour= (szBuffer[0] == '1');
 
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ITLZERO, szBuffer, 2);
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ITLZERO, szBuffer, 2);	//在小时制前禁止显示0
 		fSuppress= (szBuffer[0] == '0');
 		
 		InvalidateRect(hwnd, NULL, TRUE);
@@ -141,7 +141,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		return 0;
 	case WM_TIMER:
-		InvalidateRect(hwnd, NULL, TRUE);
+		InvalidateRect(hwnd, NULL, TRUE);	//每秒使窗口无效，引发WM_PAINT
 		return 0;
 	case WM_PAINT:
 		hdc= BeginPaint(hwnd, &ps);
