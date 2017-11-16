@@ -89,7 +89,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc= BeginPaint(hwnd, &ps);
 		GetClientRect(hwnd, &rc);
 		wsprintf(szBuffer, TEXT(" %02X %02X %02X  "),
-			GetRValue(cr), GetGValue(cr), GetBValue(cr));
+			GetRValue(cr), GetGValue(cr), GetBValue(cr));	//获取当前颜色并且输出
 		DrawText(hdc, szBuffer, -1, &rc, DT_SINGLELINE|DT_CENTER|DT_VCENTER);
 
 		EndPaint(hwnd, &ps);
