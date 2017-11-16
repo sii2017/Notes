@@ -4,7 +4,7 @@
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
-	static TCHAR szAppName[]= TEXT("DigClock");
+	static TCHAR szAppName[]= TEXT("DigClock");	//Dig means digital
 	HWND hwnd;
 	MSG msg;
 	WNDCLASS wndclass;
@@ -87,7 +87,7 @@ void DisplayTwoDigits(HDC hdc, int iNumber, BOOL fSuppress)	//输出时间的数字
 void DisplayColon(HDC hdc)	//时间的两个冒号
 {
 	POINT ptColon[2][4]= {
-		2,21,6,17,10,21,6,15,
+		2,21,6,17,10,21,6,25,
 		2,51,6,47,10,51,6,55
 	};
 
@@ -126,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		hBrushRed= CreateSolidBrush(RGB(255,0,0));
 		SetTimer(hwnd, ID_TIMER, 1000, NULL);
-	case WM_SETTINGCHANGE:
+	case WM_SETTINGCHANGE:	//如果更改了任何系统设定都会重新获得
 		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ITIME, szBuffer, 2);	//确定是12小时制还是24小时制
 		f24Hour= (szBuffer[0] == '1');
 
