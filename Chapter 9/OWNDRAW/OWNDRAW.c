@@ -65,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		cyChar= HIWORD(GetDialogBaseUnits());
 
 		hwndSmaller= CreateWindow(TEXT("button"), TEXT(""), 
-			WS_CHILD|WS_VISIBLE|BS_OWNERDRAW, 
+			WS_CHILD|WS_VISIBLE|BS_OWNERDRAW,				//BS_OWNERDRAW这种类型下，在该按钮的范围里按下都是点击按钮
 			0,0, BTN_WIDTH, BTN_HEIGHT,  
 			hwnd, (HMENU)ID_SMALLER, hInst, NULL);
 		
@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			BTN_WIDTH, BTN_HEIGHT, TRUE);
 		return 0;
 	case WM_COMMAND:
-		GetWindowRect(hwnd, &rc);
+		GetWindowRect(hwnd, &rc);	//获得当前窗口的大小（上下左右的坐标）以便进行缩小放大
 		//Make the winodw 10% smaller or larger
 		switch(wParam)
 		{
@@ -102,16 +102,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		MoveWindow(hwnd, rc.left, rc.top, rc.right-rc.left, rc.bottom- rc.top, TRUE);
 		return 0;
-	case WM_DRAWITEM:
-		pdis= (LPDRAWITEMSTRUCT)lParam;
-		//fill area with white and frame it black
+	case WM_DRAWITEM://当BS_OWNERDRAW的按钮被按下放开或者需要重新着色的时候都会发送该消息
+		pdis= (LPDRAWITEMSTRUCT)lParam;	//存储了子窗口控件的大量信息报货hdc等等
+		//fill area with white and frame it black  白底黑框
 		FillRect(pdis->hDC, &pdis->rcItem, (HBRUSH)GetStockObject(WHITE_BRUSH));
 		FrameRect(pdis->hDC, &pdis->rcItem, (HBRUSH)GetStockObject(BLACK_BRUSH));
 		//Draw inward and outward balck triangles
 		cx= pdis->rcItem.right - pdis->rcItem.left;
 		cy= pdis->rcItem.bottom - pdis->rcItem.top;
 		
-		switch(pdis->CtlID)
+		switch(pdis->CtlID)	//用来重画子控件按钮的方框
 		{
 		case ID_SMALLER:
 			pt[0].x= 3*cx/8;
@@ -121,7 +121,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			pt[2].x= 4*cx/8;
 			pt[2].y= 3*cy/8;
 
-			Triangle(pdis->hDC,pt);
+			Triangle(pdis->hDC,pt);		//画按钮上的三角形的
 
 			pt[0].x= 7*cx/8;
 			pt[0].y= 3*cy/8;
@@ -189,8 +189,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		//Invert the rectangle if the button is selected
-		if(pdis->itemState&ODS_SELECTED)
-			InvertRect(pdis->hDC, &pdis->rcItem);
+		if(pdis->itemState&ODS_SELECTED)	//如果正在按下按钮
+			InvertRect(pdis->hDC, &pdis->rcItem);	//将按钮设为反转的颜色
 		//Draw a focus rectangle if the button hase the focus
 		if(pdis->itemState&ODS_FOCUS)
 		{
@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			pdis->rcItem.right-= cx/16;
 			pdis->rcItem.bottom-= cy/16;
 
-			DrawFocusRect(pdis->hDC, &pdis->rcItem);
+			DrawFocusRect(pdis->hDC, &pdis->rcItem);	//按钮周围画虚线表示获得焦点
 		}
 		return 0;
 	case WM_DESTROY:
