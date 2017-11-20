@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			cxChar, //x坐标位置
 			cyChar*(1+2*i), //y坐标位置
 			20*cxChar, //宽度
-			7*cyChar/4, //高度
+			7*cyChar/4, //高度，当按钮的高度为文字高度的7/4倍看起来最好
 			hwnd, //父窗口
 			(HMENU)i, //子窗口id这个可以自己定义，这里直接使用12345...
 			((LPCREATESTRUCT)lParam)->hInstance,	//**执行实体句柄
