@@ -97,11 +97,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		SetFocus(hwnd);
 		return 0;
-	case WM_SETFOCUS:
+	case WM_SETFOCUS:	//当父窗口获得输入焦点则把输入焦点交给滚动条子窗口，始终把键盘输入焦点给子窗口
 		SetFocus(hwndScroll[idFocus]);
 		return 0;
 	case WM_VSCROLL:
-		i= GetWindowLong((HWND)lParam, GWL_ID);
+		i= GetWindowLong((HWND)lParam, GWL_ID);	//子窗口id
 		
 		switch(LOWORD(wParam))
 		{
@@ -132,10 +132,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wsprintf(szBuffer, TEXT("%i"), color[i]);
 		SetWindowText(hwndValue[i], szBuffer);
 
-		DeleteObject((HBRUSH)SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)CreateSolidBrush(RGB(color[0], color[1], color[2]))));
+		DeleteObject((HBRUSH)SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)CreateSolidBrush(RGB(color[0], color[1], color[2]))));	//设置新的画刷并且删除旧的画刷（返回值）
 		InvalidateRect(hwnd, &rcColor, TRUE);
 		return 0;
-	case WM_CTLCOLORSCROLLBAR://拦截用来改变滚动条控件的各种颜色
+	case WM_CTLCOLORSCROLLBAR://************拦截用来改变滚动条控件的各种颜色*********************返回画刷给自动调用它的PAINT
 		i= GetWindowLong((HWND)lParam, GWL_ID);
 		return (LRESULT)hBrush[i];
 	case WM_CTLCOLORSTATIC:
@@ -181,4 +181,9 @@ LRESULT CALLBACK ScrollProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 }
 
 
-//在窗口内建立三个子窗口滚动条控件，分别代表RGB的三种颜色，拖动这三种可以进行颜色的搭配。
+//0 在窗口内建立三个子窗口滚动条控件，分别代表RGB的三种颜色，拖动这三种可以进行颜色的搭配。
+//1 通过预定好的scrollbar和static这两个classname来创建子窗口
+//2 通过movewindows来改变窗口的位置以及大小
+//3 虽然滚动条控件也有自己的消息处理程序，但是滚动的消息仍旧是发给父窗口的
+//4 SetClassLong来设置新的子控件背景画刷，并删除返回值即上一个旧的画刷句柄
+//5 滚动条控件创建中放入WS_TABSTOP，可以使该滚动条拥有焦点时，在该滚动条的小方框上显示一个闪烁的灰色块
