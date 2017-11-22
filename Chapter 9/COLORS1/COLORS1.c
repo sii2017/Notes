@@ -3,7 +3,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ScrollProc(HWND, UINT, WPARAM, LPARAM);//子控件滚动条消息处理
 
 int idFocus;
-WNDPROC OldScroll[3];
+WNDPROC OldScroll[3];	//保存窗口消息处理程序地址
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	wndclass.hInstance= hInstance;
 	wndclass.hIcon= LoadIcon(NULL, IDI_APPLICATION);
 	wndclass.hCursor= LoadCursor(NULL,IDC_ARROW);
-	wndclass.hbrBackground= (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wndclass.hbrBackground= CreateSolidBrush(0);	//new
 	wndclass.lpszMenuName= NULL;
 	wndclass.lpszClassName= szAppName;
 
@@ -58,7 +58,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:		//一共使用了10个子窗口，其中6个静态文字框窗口，3个滚动条窗口，1个矩形框
 		hInstance= (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
-		hwndRect= CreateWindow(TEXT("static"), NULL, WS_CHILD|WS_VISIBLE|SS_WHITERECT, 0, 0, 0, 0, 
+		hwndRect= CreateWindow(TEXT("static"), NULL, WS_CHILD|WS_VISIBLE|SS_WHITERECT, 0, 0, 0, 0,	//这个并不是变色的那个方块，而是将9个子控件圈起来的方块。
 			hwnd, (HMENU)9, hInstance, NULL);
 
 		for(i=0; i<3; i++)
@@ -76,7 +76,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hwndValue[i]= CreateWindow(TEXT("static"), TEXT("0"), WS_CHILD|WS_VISIBLE|SS_CENTER, 
 				0,0,0,0, hwnd, (HMENU)(i+6), hInstance, NULL);
 
-			OldScroll[i]= (WNDPROC)SetWindowLong(hwndScroll[i], GWL_WNDPROC, (LONG)ScrollProc);
+			OldScroll[i]= (WNDPROC)SetWindowLong(hwndScroll[i], GWL_WNDPROC, (LONG)ScrollProc);	//通过SetWindowLong把控件与新的窗口消息处理程序ScrollProc挂钩，同时保存原来的窗口消息处理程序的地址
 			hBrush[i]= CreateSolidBrush(crPrim[i]);
 		}
 		hBrushStatic= CreateSolidBrush(GetSysColor(COLOR_BTNHIGHLIGHT));
@@ -132,14 +132,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wsprintf(szBuffer, TEXT("%i"), color[i]);
 		SetWindowText(hwndValue[i], szBuffer);
 
-		DeleteObject((HBRUSH)SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)CreateSolidBrush(RGB(color[0], color[1], color[2]))));	//设置新的画刷并且删除旧的画刷（返回值）
-		InvalidateRect(hwnd, &rcColor, TRUE);
+		DeleteObject((HBRUSH)
+			SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)
+			CreateSolidBrush(RGB(color[0], color[1], color[2]))));	//设置新的画刷并且删除旧的画刷（返回值）
+
+		//当滚动条滚动，设置新的颜色并且设定以及制作画刷，强制画面无效使windows重画
+		InvalidateRect(hwnd, &rcColor, TRUE);	//TRUE表示希望在重新着色前删去背景
 		return 0;
 	case WM_CTLCOLORSCROLLBAR://************拦截用来改变滚动条控件的各种颜色*********************返回画刷给自动调用它的PAINT
 		i= GetWindowLong((HWND)lParam, GWL_ID);
 		return (LRESULT)hBrush[i];
-	case WM_CTLCOLORSTATIC:
-		i= GetWindowLong((HWND)lParam, GWL_ID);
+	case WM_CTLCOLORSTATIC:	//如果应用程序处理此消息，返回值是一个画刷，系统用这个画刷来绘制静态控件的背景。
+		i= GetWindowLong((HWND)lParam, GWL_ID);	//获得是子窗口ID
 		if(i>=3&& i<=8)	//static text controls
 		{
 			SetTextColor((HDC)wParam, crPrim[i%3]);
@@ -152,7 +156,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hBrushStatic= CreateSolidBrush(GetSysColor(COLOR_BTNHIGHLIGHT));
 		return 0;
 	case WM_DESTROY:
-		DeleteObject((HBRUSH)SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)GetStockObject(WHITE_BRUSH)));
+		DeleteObject((HBRUSH)
+			SetClassLong(hwnd, GCL_HBRBACKGROUND, (LONG)
+			GetStockObject(WHITE_BRUSH)));
 
 		for(i=0;i<3;i++)
 			DeleteObject(hBrush[i]);
@@ -164,7 +170,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return  DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-LRESULT CALLBACK ScrollProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ScrollProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)	//给滚动条控件自定义的这个窗口消息处理程序仅仅是用来给tab。。使用的。其他上下左右的按键会发送到父窗口的窗口消息处理程序
 {
 	int id= GetWindowLong(hwnd, GWL_ID);
 	switch(message)
@@ -177,7 +183,7 @@ LRESULT CALLBACK ScrollProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		idFocus= id;
 		break;
 	}
-	return CallWindowProc(OldScroll[id], hwnd, message, wParam, lParam);
+	return CallWindowProc(OldScroll[id], hwnd, message, wParam, lParam);	//经过自己的窗口消息处理程序后再返回给原来的窗口消息处理程序
 }
 
 
@@ -187,3 +193,4 @@ LRESULT CALLBACK ScrollProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 //3 虽然滚动条控件也有自己的消息处理程序，但是滚动的消息仍旧是发给父窗口的
 //4 SetClassLong来设置新的子控件背景画刷，并删除返回值即上一个旧的画刷句柄
 //5 滚动条控件创建中放入WS_TABSTOP，可以使该滚动条拥有焦点时，在该滚动条的小方框上显示一个闪烁的灰色块
+//6 由于子控件的窗口处理程序已经内定，不能在其中进行操作，所以设置个新的子控件窗口消息处理函数，与控件进行挂钩，并且保存原来的窗口消息处理函数的地址，当我们处理好自己需要的消息，再将消息发回给原来的窗口消息处理程序
