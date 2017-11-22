@@ -45,3 +45,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
+		hwndEdit= CreateWindow(TEXT("edit"), NULL, WS_CHILD|WS_VISIBLE|WS_HSCROLL|
+			WS_VSCROLL/*|WS_BORDER*/|ES_LEFT|ES_MULTILINE|ES_AUTOHSCROLL|ES_AUTOVSCROLL,
+			0,0,0,0,hwnd, (HMENU)ID_EDIT, ((LPCREATESTRUCT)lParam)->hInstance, NULL);
+		return 0;
+	case WM_SETFOCUS:
+		SetFocus(hwndEdit);
+		return 0;
+	case WM_SIZE:
+		MoveWindow(hwndEdit, 0,0, LOWORD(lParam), HIWORD(lParam), TRUE);
+		return 0;
+	case WM_COMMAND:
+		if(LOWORD(wParam)==ID_EDIT)
+			if(HIWORD(wParam)==EN_ERRSPACE|| HIWORD(wParam) ==EN_MAXTEXT)
+				MessageBox(hwnd, TEXT("Edit control out of space."),
+				szAppName, MB_OK|MB_ICONSTOP);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+
+//该程序有一个问题就是由edit创建的文本编辑框只能容纳3000个字符
