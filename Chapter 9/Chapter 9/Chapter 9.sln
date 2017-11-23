@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "POPPAD1", "..\POPPAD1\POPPA
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ENVIRON", "..\ENVIRON\ENVIRON.vcproj", "{5FFE2AC3-B51E-413C-AF15-6DB89988E82F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HEAD", "..\HEAD\HEAD.vcproj", "{D5D267B7-2CCF-4BF3-93CF-BD2F90D80AAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{5FFE2AC3-B51E-413C-AF15-6DB89988E82F}.Debug|Win32.Build.0 = Debug|Win32
 		{5FFE2AC3-B51E-413C-AF15-6DB89988E82F}.Release|Win32.ActiveCfg = Release|Win32
 		{5FFE2AC3-B51E-413C-AF15-6DB89988E82F}.Release|Win32.Build.0 = Release|Win32
+		{D5D267B7-2CCF-4BF3-93CF-BD2F90D80AAF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D5D267B7-2CCF-4BF3-93CF-BD2F90D80AAF}.Debug|Win32.Build.0 = Debug|Win32
+		{D5D267B7-2CCF-4BF3-93CF-BD2F90D80AAF}.Release|Win32.ActiveCfg = Release|Win32
+		{D5D267B7-2CCF-4BF3-93CF-BD2F90D80AAF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
