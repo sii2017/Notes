@@ -54,8 +54,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		hInstance= ((LPCREATESTRUCT)lParam)->hInstance;
-		hIcon= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
-		cxIcon= GetSystemMetrics(SM_CXICON);
+		hIcon= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));	//获得图标的句柄以供使用
+		cxIcon= GetSystemMetrics(SM_CXICON);	//获得图标的大小
 		cyIcon= GetSystemMetrics(SM_CYICON);
 		return 0;
 	case WM_SIZE:
