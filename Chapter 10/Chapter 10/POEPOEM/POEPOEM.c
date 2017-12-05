@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	if(!RegisterClass(&wndclass))
 	{
 		LoadStringA(hInstance, IDS_APPNAME, (char*)szAppName, sizeof(szAppName));//这里重新加载了一遍
-		LoadStringA(hInsatnce, IDS_ERRMSG, (char*)szErrMsg, sizeof(szErrMsg));
+		LoadStringA(hInstance, IDS_ERRMSG, (char*)szErrMsg, sizeof(szErrMsg));
 		MessageBoxA(NULL, (char*)szErrMsg, (char*)szAppName, MB_ICONERROR);
 		return 0;
 	}
@@ -68,7 +68,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ReleaseDC(hwnd, hdc);
 
 		xScroll=  GetSystemMetrics(SM_CXVSCROLL);
-		hScroll= CreteaWindow(TEXT("scrollbar"), NULL, WS_CHILD|WS_VISIBLE|SBS_VERT,
+		hScroll= CreateWindow(TEXT("scrollbar"), NULL, WS_CHILD|WS_VISIBLE|SBS_VERT,
 			0,0,0,0, hwnd, (HMENU)1, hInst, NULL);
 
 		//LoadResource
@@ -83,3 +83,67 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			pText= AnsiNext(pText);
 		}
 		*pText= '\0';
+
+		SetScrollRange(hScroll, SB_CTL, 0, iNumLines, FALSE);
+		SetScrollPos(hScroll, SB_CTL, 0, FALSE);
+		return 0;
+
+	case WM_SIZE:
+		MoveWindow(hScroll, LOWORD(lParam)- xScroll, 0, xScroll, 
+			cyClient= HIWORD(lParam), TRUE);
+		SetFocus(hwnd);
+		return 0;
+	case WM_SETFOCUS:
+		SetFocus(hScroll);
+		return 0;
+	case WM_VSCROLL:
+		switch(wParam)
+		{
+		case SB_TOP:
+			iPosition= 0;
+			break;
+		case SB_BOTTOM:
+			iPosition= iNumLines;
+			break;
+		case SB_LINEUP:
+			iPosition -= 1;
+			break;
+		case SB_LINEDOWN:
+			iPosition+= 1;
+			break;
+		case SB_PAGEUP:
+			iPosition-= cyClient/cyChar;
+			break;
+		case SB_PAGEDOWN:
+			iPosition+= cyClient/cyChar;
+			break;
+		case SB_THUMBPOSITION:
+			iPosition= LOWORD(lParam);
+			break;
+		}
+		iPosition= max(0, min(iPosition,iNumLines));
+
+		if(iPosition!= GetScrollPos(hScroll, SB_CTL))
+		{
+			SetScrollPos(hScroll, SB_CTL, iPosition, TRUE);
+			InvalidateRect(hwnd, NULL, TRUE);
+		}
+		return 0;
+	case WM_PAINT:
+		hdc= BeginPaint(hwnd, &ps);
+
+		pText= (char*)LockResource(hResource);
+		GetClientRect(hwnd, &rect);
+		rect.left+= cxChar;
+		rect.top+= cyChar*(1-iPosition);
+		DrawTextA(hdc, pText, -1, &rect, DT_EXTERNALLEADING);
+
+		EndPaint(hwnd, &ps);
+		return 0;
+	case WM_DESTROY:
+		FreeResource(hResource);
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
