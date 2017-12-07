@@ -147,3 +147,5 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
+//这个程序并没有完整的还原出来，书上没有画出程序正常展示应有的样子，也缺少了添加资源的过程。
