@@ -1,9 +1,10 @@
 #include <windows.h>
 #include "resource.h"
 #define ID_TIMER 1
-
+HMENU hMenu1;	//额外的补丁，来显示窗口
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 TCHAR szAppName[]= TEXT("MenuDemo");
+TCHAR szText[]= TEXT("IDM_MENUDEMO");	//额外的补丁，来显示窗口
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
@@ -16,10 +17,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	wndclass.cbClsExtra= 0;
 	wndclass.cbWndExtra= 0;
 	wndclass.hInstance= hInstance;
-	以前是wndclass.hIcon= LoadIcon(NULL, IDI_APPLICATION);	//以前使用的是系统的标准图标
+	wndclass.hIcon= LoadIcon(NULL, IDI_APPLICATION);	
 	wndclass.hCursor= LoadCursor(NULL, IDC_ARROW);
 	wndclass.hbrBackground= GetStockObject(WHITE_BRUSH);
-	wndclass.lpszMenuName= szAppName;
+	//wndclass.lpszMenuName= szAppName;	//书上使用这个方法进行添加，但是失败。网上也有很多人都失败了。
+	wndclass.lpszMenuName= NULL;
 	wndclass.lpszClassName= szAppName;
 
 	if(!RegisterClass(&wndclass))
@@ -28,9 +30,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		return 0;
 	}
 
+	
+	hMenu1= LoadMenu (hInstance, MAKEINTRESOURCE (IDM_MENUDEMO)); 
+
 	hwnd= CreateWindow(szAppName, TEXT("Menu Demonstration"), WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-		NULL, NULL, hInstance, NULL);
+		NULL, hMenu1, hInstance, NULL);  //额外的补丁，来显示窗口
 	ShowWindow(hwnd, iCmdShow);
 	UpdateWindow(hwnd);
 
@@ -42,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	return msg.wParam;
 }
 
-LRESULT CALLBACK WndPrc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static int idColor[5]= {
 		WHITE_BRUSH, LTGRAY_BRUSH, GRAY_BRUSH, DKGRAY_BRUSH, BLACK_BRUSH
@@ -66,7 +71,7 @@ LRESULT CALLBACK WndPrc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;
 		case IDM_EDIT_UNDO:
-		case DIM_EDIT_CUT:
+		case IDM_EDIT_CUT:
 		case IDM_EDIT_COPY:
 		case IDM_EDIT_PASTE:
 		case IDM_EDIT_CLEAR:
