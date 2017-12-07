@@ -20,8 +20,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	wndclass.hIcon= LoadIcon(NULL, IDI_APPLICATION);	
 	wndclass.hCursor= LoadCursor(NULL, IDC_ARROW);
 	wndclass.hbrBackground= GetStockObject(WHITE_BRUSH);
-	//wndclass.lpszMenuName= szAppName;	//书上使用这个方法进行添加，但是失败。网上也有很多人都失败了。
-	wndclass.lpszMenuName= NULL;
+	wndclass.lpszMenuName= szAppName;	//书上使用这个方法进行添加，但是失败。网上也有很多人都失败了。书上肯定漏了一些东西没有讲。
+	//wndclass.lpszMenuName= NULL;
 	wndclass.lpszClassName= szAppName;
 
 	if(!RegisterClass(&wndclass))
@@ -35,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 	hwnd= CreateWindow(szAppName, TEXT("Menu Demonstration"), WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-		NULL, hMenu1, hInstance, NULL);  //额外的补丁，来显示窗口
+		NULL, /*hMenu1*/NULL, hInstance, NULL);  //额外的补丁，来显示窗口
 	ShowWindow(hwnd, iCmdShow);
 	UpdateWindow(hwnd);
 
@@ -82,14 +82,15 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_BKGND_GRAY:
 		case IDM_BKGND_DKGRAY:
 		case IDM_BKGND_BLACK:
-			CheckMenuItem(hMenu, iSelection, MF_UNCHECKED);
-			iSelection= LOWORD(wParam);
-			CheckMenuItem(hMenu, iSelection, MF_CHECKED);
+			CheckMenuItem(hMenu, iSelection, MF_UNCHECKED);//将原来的check取消
+			iSelection= LOWORD(wParam);//新的背景颜色从低字节获取
+			CheckMenuItem(hMenu, iSelection, MF_CHECKED);//选中新的项目
 			SetClassLong(hwnd, GCL_HBRBACKGROUND, 
-				(LONG)GetStockObject(idColor[LOWORD(wParam)-IDM_BKGND_WHITE]));
-			InvalidateRect(hwnd, NULL, TRUE);
+				(LONG)GetStockObject(idColor[LOWORD(wParam)-IDM_BKGND_WHITE]));//刷新背景颜色
+			InvalidateRect(hwnd, NULL, TRUE);//重新刷新页面
 			return 0;
 		case IDM_TIMER_START:
+			//设置定时器，如果成功则无效化start，有效化stop
 			if(SetTimer(hwnd, ID_TIMER, 1000, NULL))
 			{
 				EnableMenuItem(hMenu, IDM_TIMER_START, MF_GRAYED);
@@ -120,3 +121,8 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
+//这个程序中介绍了一些系统菜单和自定义菜单的消息，进行一些处理，亦或者是通过蜂鸣声来代替
+//这里碰到了一个问题，当我们通过wnd来设置menu的时候会失败，通过查询网上失败了非常多的人。
+//解决方法有很多，但是目前无一成功，为了进度，暂时不进行无所谓的尝试，等下个程序再看
+//现在用了第二种方法既在CreateWindow中放入menu句柄来加载menu
