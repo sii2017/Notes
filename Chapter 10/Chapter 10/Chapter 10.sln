@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MENUDEMO", "MENUDEMO\MENUDE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "POPMENU", "POPMENU\POPMENU.vcproj", "{6E12FA30-BBD8-4133-92B0-EB525660A285}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "POORMENU", "POORMENU\POORMENU.vcproj", "{35EA7AFA-E566-4629-B026-4AFBCA90428C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{6E12FA30-BBD8-4133-92B0-EB525660A285}.Debug|Win32.Build.0 = Debug|Win32
 		{6E12FA30-BBD8-4133-92B0-EB525660A285}.Release|Win32.ActiveCfg = Release|Win32
 		{6E12FA30-BBD8-4133-92B0-EB525660A285}.Release|Win32.Build.0 = Release|Win32
+		{35EA7AFA-E566-4629-B026-4AFBCA90428C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35EA7AFA-E566-4629-B026-4AFBCA90428C}.Debug|Win32.Build.0 = Debug|Win32
+		{35EA7AFA-E566-4629-B026-4AFBCA90428C}.Release|Win32.ActiveCfg = Release|Win32
+		{35EA7AFA-E566-4629-B026-4AFBCA90428C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
