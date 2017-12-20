@@ -1,7 +1,7 @@
 #include <windows.h>
 #include "resource.h"
 
-#define ID_EDIT
+#define ID_EDIT  1
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); 
 TCHAR szAppName[]= TEXT("PopPad2");
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	wndclass.hInstance= hInstance;
 	wndclass.hIcon= LoadIcon(hInstance, szAppName);	
 	wndclass.hCursor= LoadCursor(NULL, IDC_ARROW);
-	wndclass.hbrBackground= GetStockObject(WHITE_BRUSH);
+	wndclass.hbrBackground= (HBRUSH)GetStockObject(WHITE_BRUSH);
 	wndclass.lpszMenuName= szAppName;	//书上使用这个方法进行添加，但是失败。网上也有很多人都失败了。书上肯定漏了一些东西没有讲。
 	//wndclass.lpszMenuName= NULL;
 	wndclass.lpszClassName= szAppName;
@@ -66,7 +66,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hwndEdit= CreateWindow(TEXT("edit"), NULL, 
 			WS_CHILD| WS_VISIBLE| WS_HSCROLL| WS_VSCROLL| WS_BORDER| ES_LEFT| ES_MULTILINE| 
 			ES_AUTOHSCROLL| ES_AUTOVSCROLL, 0,0,0,0, hwnd, (HMENU)ID_EDIT, 
-			((LPCREATESTRUCTlParam)->hInstance, NULL);
+			((LPCREATESTRUCT)lParam)->hInstance, NULL);
 		return 0;
 	case WM_SETFOCUS:
 		SetFocus(hwndEdit);
@@ -74,21 +74,22 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		MoveWindow(hwndEdit, 0,0, LOWORD(lParam), HIWORD(lParam), TRUE);
 		return 0;
-	case WM_INITMENUPOPUP:
-		if(lParam==1)
+	case WM_INITMENUPOPUP://当打开一个能pop的菜单的时候会发送该消息
+		if(lParam==1)	//lParam是索引，file是0，edit是1，about是2
 		{
+			//允许、禁止或变灰指定的菜单条目
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_UNDO, 
 				SendMessage(hwndEdit, EM_CANUNDO,0,0)?MF_ENABLED:MF_GRAYED);
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_PASTE, 
 				IsClipboardFormatAvailable(CF_TEXT)?MF_ENABLED:MF_GRAYED);
-			iSelect= SendMessage(hwndEdit, EM_GETSEL, 0, 0);//这里是获取什么
+			iSelect= SendMessage(hwndEdit, EM_GETSEL, 0, 0);
 			
-			if(HIWORD(iSelect)== LOWORD(iSelect))
+			if(HIWORD(iSelect)== LOWORD(iSelect))//iSelect的低字节为选中内容的开始位置，高字节为结束位置。如果相同则没有内容被选中
 				iEnable= MF_GRAYED;
 			else
 				iEnable= MF_ENABLED;
 
-			EnableMenuItem((HMENU)wParam, IDM_EDIT_CUT, iEnale);
+			EnableMenuItem((HMENU)wParam, IDM_EDIT_CUT, iEnable);
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_COPY, iEnable);
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_CLEAR, iEnable);
 			return 0;
@@ -118,7 +119,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SendMessage(hwnd, WM_CLOSE, 0, 0);
 				return 0;
 			case IDM_EDIT_UNDO:
-				SendMessage(hwndEdit, WM_UNDO,0,0);
+				SendMessage(hwndEdit, WM_UNDO,0,0);	//向编辑控件发送消息
 				return 0;
 			case IDM_EDIT_CUT:
 				SendMessage(hwndEdit, WM_CUT, 0, 0);
