@@ -1,10 +1,10 @@
 #include <windows.h>
 #include "resource.h"
-LRESULT CALLBACK WndPrco(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK AboutDlgProc(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInsstance, PSTR szCmdLine, int iCmdShow)
 {
-	static TCHAR szAppName[]= TEXT{"About1");
+	static TCHAR szAppName[]= TEXT("About1");
 	MSG msg;
 	HWND hwnd;
 	WNDCLASS wndclass;
@@ -53,7 +53,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch(LOWORD(wParam))
 		{
 		case IDM_APP_ABOUT:
-			DialogBox(hInstance, TEXT("AboutBox"), hwnd, AboutDlgProc);
+			DialogBox(hInstance, TEXT("AboutBox"), hwnd, AboutDlgProc);		//创建ID为AboutBox的对话框,这里跟MessageBox不同，后者的第二个参数仅仅为标题，并且对话框有自己专用的消息处理程序
 			break;
 		}
 		return 0;
@@ -83,3 +83,6 @@ BOOL CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 	}
 	return FALSE;
 }
+
+//其他大致相同，只是在程序中创建ID为AboutBox的对话框,
+//这里跟MessageBox不同，后者的第二个参数仅仅为标题，并且对话框有自己专用的消息处理程序

@@ -194,6 +194,10 @@
 				RelativePath=".\ABOUT1.rc"
 				>
 			</File>
+			<File
+				RelativePath=".\icon1.ico"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

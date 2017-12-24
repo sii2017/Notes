@@ -52,13 +52,15 @@ END
 // Dialog
 //
 
-IDD_DIALOG1 DIALOGEX 0, 0, 316, 182
+AboutBox DIALOGEX 32, 32, 316, 182
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,205,161,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,259,161,50,14
+    DEFPUSHBUTTON   "OK",IDOK,131,161,50,14
+    CTEXT           "About1",IDC_STATIC,98,55,106,27
+    CTEXT           "About Box Demo Program",IDC_STATIC,75,90,163,37
+    ICON            "ABOUT1",IDC_STATIC,14,14,20,20
 END
 
 
@@ -70,7 +72,7 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_DIALOG1, DIALOG
+    "AboutBox", DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 309
@@ -94,6 +96,15 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+ABOUT1                  ICON                    "icon1.ico"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
