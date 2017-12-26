@@ -1,0 +1,136 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+AboutBox DIALOGEX 0, 0, 295, 307
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,69,286,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,183,286,50,14,WS_GROUP
+    ICON            "About2",IDC_STATIC,22,20,21,20
+    LTEXT           "About2",IDC_STATIC,123,28,28,8
+    LTEXT           "About Box Demo Program",IDC_STATIC,97,51,88,11
+    GROUPBOX        "&Color",IDC_STATIC,27,78,97,200,WS_GROUP
+    RADIOBUTTON     "&Black",IDC_BLACK,38,94,74,14,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "B&lue",IDC_BLUE,37,110,82,17
+    RADIOBUTTON     "&Green",IDC_GREEN,37,137,69,12
+    RADIOBUTTON     "Cya&n",IDC_CYAN,37,153,83,21
+    RADIOBUTTON     "&Red",IDC_RED,35,176,79,18
+    RADIOBUTTON     "&Magenta",IDC_MAGENTA,34,199,81,18
+    RADIOBUTTON     "&Yellow",IDC_YELLOW,35,228,72,17
+    RADIOBUTTON     "&White",IDC_WHITE,35,252,80,15
+    GROUPBOX        "&Figure",IDC_STATIC,144,202,125,71
+    RADIOBUTTON     "Rec&tangle",IDC_RECT,153,222,102,16,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "&Ellipse",IDC_ELLIPSE,153,242,104,18
+    LTEXT           "",IDC_PAINT,159,82,98,68
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    "AboutBox", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 300
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+About2                  ICON                    "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+About2 MENU 
+BEGIN
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About",                      40001
+    END
+END
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
