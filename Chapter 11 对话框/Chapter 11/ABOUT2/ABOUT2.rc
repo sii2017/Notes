@@ -52,14 +52,14 @@ END
 // Dialog
 //
 
-AboutBox DIALOGEX 0, 0, 295, 307
+ABOUTBOX DIALOGEX 0, 0, 295, 307
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,69,286,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,183,286,50,14,WS_GROUP
-    ICON            "About2",IDC_STATIC,22,20,21,20
+    ICON            "About2",IDC_STATIC,22,20,20,20
     LTEXT           "About2",IDC_STATIC,123,28,28,8
     LTEXT           "About Box Demo Program",IDC_STATIC,97,51,88,11
     GROUPBOX        "&Color",IDC_STATIC,27,78,97,200,WS_GROUP
@@ -86,7 +86,7 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    "AboutBox", DIALOG
+    "ABOUTBOX", DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 288
@@ -104,14 +104,14 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-About2                  ICON                    "icon1.ico"
+ABOUT2                  ICON                    "icon1.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-About2 MENU 
+ABOUT2 MENU 
 BEGIN
     POPUP "&Help"
     BEGIN

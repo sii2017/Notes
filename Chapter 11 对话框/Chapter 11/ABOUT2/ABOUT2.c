@@ -128,11 +128,12 @@ BOOL CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 		case IDOK:
 			iCurrentColor= iColor;
 			iCurrentFigure= iFigure;
-			EndDialog(hDlg, TRUE);
+			EndDialog(hDlg, TRUE);	//第二个参数与OK相关
 			return TRUE;
 		case IDCANCEL:
-			EndDialog(hDlg, FALSE);
+			EndDialog(hDlg, FALSE);	//第二个参数与cancel相关
 			return TRUE;
+
 		case IDC_BLACK:
 		case IDC_RED:
 		case IDC_GREEN:
