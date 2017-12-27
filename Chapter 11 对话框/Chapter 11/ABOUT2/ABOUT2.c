@@ -43,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInsstance, PSTR szCmdLine
 	return msg.wParam;
 }
 
-void PaintWindow(HWND hwnd, int iColor, int iFigure)
+void PaintWindow(HWND hwnd, int iColor, int iFigure)//这里的hwnd实际上是对话框控件IDC_PAINT的，并不是本体
 {
 	static COLORREF crColor[8]= 
 	{ RGB(0,0,0), RGB(0,0,255), RGB(0,255,0), RGB(0,255,255), 
@@ -87,7 +87,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 		case IDM_APP_ABOUT:
 			if(DialogBox(hInstance, TEXT("AboutBox"), hwnd, AboutDlgProc))
-				InvalidateRect(hwnd, NULL, TRUE);
+				InvalidateRect(hwnd, NULL, TRUE);	//在DialogBox关闭后，才会有返回值进入到这里
 			return 0;
 		}
 		break;
@@ -118,7 +118,7 @@ BOOL CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 		CheckRadioButton(hDlg, IDC_BLACK, IDC_WHITE, iColor);
 		CheckRadioButton(hDlg, IDC_RECT, IDC_ELLIPSE, iFigure);
 
-		hCtrlBlock= GetDlgItem(hDlg, IDC_PAINT);
+		hCtrlBlock= GetDlgItem(hDlg, IDC_PAINT);//用对话框句柄和控件ID来取得一个对话框控件的窗口句柄
 
 		SetFocus(GetDlgItem(hDlg, iColor));
 		return FALSE;
