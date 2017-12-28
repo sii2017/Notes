@@ -67,6 +67,7 @@ void PaintWindow(HWND hwnd, int iColor, int iFigure)//这里的hwnd实际上是对话框控
 
 void PaintTheBlock(HWND hCtrl, int iColor, int iFigure)
 {
+	//PaintWindow(hCtrl, iColor, iFigure);
 	InvalidateRect(hCtrl, NULL, TRUE);
 	UpdateWindow(hCtrl);
 	PaintWindow(hCtrl, iColor, iFigure);
