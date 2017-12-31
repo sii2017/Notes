@@ -1,0 +1,130 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#include ""hexcalc.dlg\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+HEXCALC                 ICON                    "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+HEXCALC DIALOGEX 0, 0, 281, 303
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Hex Calculator"
+CLASS "HexCalc"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "A",IDC_BUTTON1,27,98,36,32
+    PUSHBUTTON      "D",IDC_BUTTON2,27,62,36,32
+    PUSHBUTTON      "7",IDC_BUTTON3,28,135,36,32
+    PUSHBUTTON      "4",IDC_BUTTON4,28,172,36,32
+    PUSHBUTTON      "1",IDC_BUTTON5,28,209,36,32
+    PUSHBUTTON      "0",IDC_BUTTON6,28,247,36,32
+    PUSHBUTTON      "E",IDC_BUTTON7,69,63,36,32
+    PUSHBUTTON      "B",IDC_BUTTON8,69,98,36,32
+    PUSHBUTTON      "8",IDC_BUTTON9,69,135,36,32
+    PUSHBUTTON      "5",IDC_BUTTON10,70,172,36,32
+    PUSHBUTTON      "2",IDC_BUTTON11,70,209,36,32
+    PUSHBUTTON      "3",IDC_BUTTON12,114,209,36,32
+    PUSHBUTTON      "6",IDC_BUTTON13,114,172,36,32
+    PUSHBUTTON      "9",IDC_BUTTON14,113,134,36,32
+    PUSHBUTTON      "C",IDC_BUTTON15,114,98,36,32
+    PUSHBUTTON      "F",IDC_BUTTON16,113,63,36,32
+    PUSHBUTTON      "+",IDC_BUTTON17,158,63,36,32
+    PUSHBUTTON      "&&",IDC_BUTTON18,203,63,36,32
+    PUSHBUTTON      "-",IDC_BUTTON19,159,99,36,32
+    PUSHBUTTON      "*",IDC_BUTTON20,159,135,36,32
+    PUSHBUTTON      "/",IDC_BUTTON21,160,172,36,32
+    PUSHBUTTON      "%",IDC_BUTTON22,160,209,36,32
+    PUSHBUTTON      "|",IDC_BUTTON23,204,99,36,32
+    PUSHBUTTON      "^",IDC_BUTTON24,203,135,36,32
+    PUSHBUTTON      "<",IDC_BUTTON25,205,172,36,32
+    PUSHBUTTON      ">",IDC_BUTTON26,205,210,36,32
+    PUSHBUTTON      "Equals",IDC_BUTTON27,161,249,79,31
+    PUSHBUTTON      "Back",IDC_BUTTON28,71,249,79,31
+    PUSHBUTTON      "0",IDC_BUTTON29,93,16,79,31
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    "HEXCALC", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 296
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#include "hexcalc.dlg"
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
