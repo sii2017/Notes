@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\POPFIND.c"
+				>
+			</File>
+			<File
 				RelativePath=".\POPPAD.c"
 				>
 			</File>
