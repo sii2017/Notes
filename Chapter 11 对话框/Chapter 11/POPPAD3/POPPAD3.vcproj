@@ -179,7 +179,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\POPFONT.c"
+				>
+			</File>
+			<File
 				RelativePath=".\POPPAD.c"
+				>
+			</File>
+			<File
+				RelativePath=".\POPPRNT0.c"
 				>
 			</File>
 		</Filter>
