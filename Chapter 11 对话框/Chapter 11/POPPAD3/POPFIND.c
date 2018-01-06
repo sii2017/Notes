@@ -3,7 +3,7 @@
 #include <tchar.h>
 #define MAX_STRING_LEN 256
 static TCHAR szFindText[MAX_STRING_LEN];
-static TCHAR szReplText[MAX_STIRNG_LEN];
+static TCHAR szReplText[MAX_STRING_LEN];
 
 HWND PopFindFindDlg(HWND hwnd)
 {
@@ -60,7 +60,7 @@ BOOL PopFindFindText(HWND hwndEdit, int* piSearchOffset, LPFINDREPLACE pfr)
 	free(pstrDoc);
 
 	//return an error code if the string cannot be found
-	of(pstrPos==NULL)
+	if(pstrPos==NULL)
 		return FALSE;
 
 	//Find the position int the document and the new start offset

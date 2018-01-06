@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInsstance, PSTR szCmdLine
 
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if((hDlgModeless== NULL||!IsDialogMessage(hDlgModeless, &msg))
+		if((hDlgModeless== NULL||!IsDialogMessage(hDlgModeless, &msg)))
 		{
 			if(!TranslateAccelerator(hwnd, hAccel, &msg))
 			{
@@ -118,7 +118,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static HINSTANCE hInst;
 	static HWND hwndEdit;
 	static int iOffset;
-	static TCHAR szFileName[MAX+PATH], szTitleName[MAX_PATH];
+	static TCHAR szFileName[MAX_PATH], szTitleName[MAX_PATH];
 	static UINT messageFindReplace;
 	int iSelBeg, iSelEnd, iEnable;
 	LPFINDREPLACE pfr;
@@ -138,11 +138,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PopFontInitialize(hwndEdit);
 
 		messageFindReplace= RegisterWindowMessage(FINDMSGSTRING);
-		DoCaption(hwnd, szTtileName);
+		DoCaption(hwnd, szTitleName);
 		return 0;
 	case WM_SETFOCUS:
 		SetFocus(hwndEdit);
-		reutrn 0;
+		return 0;
 	case WM_SIZE:
 		MoveWindow(hwndEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
 		return 0;
@@ -189,25 +189,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				return 0;
 			}
 			break;
-			switch(LOWORD(wParam))
-			{
-				//Messages from File menu
-			case IDM_FILE_NEW:
-				if(bNeedSave&&IDCANCEL== AskAboutSave(hwnd, szTitleName))
-					return 0;
-				SetWindowText(hwndEdit, TEXT("\0"));
-				szFileName[0]= '\0';
-				szTitleName[0]= '\0';
-				DoCaption(hwnd, szTitleName);
-				bNeedSave= FALSE;
+		}
+		switch(LOWORD(wParam))
+		{
+			//Messages from File menu
+			int a=0;
+		case IDM_FILE_NEW:
+			if(bNeedSave&&IDCANCEL== AskAboutSave(hwnd, szTitleName))
 				return 0;
-			case IDM_FILE_OPEN:
-				if(bNeedSave&&IDCANCEL== AskAboutSave(hwnd, szTitleName))
-					return 0;
-				if(PopFileOpenDlg(hwnd, szFileName, szTitleName))
+			SetWindowText(hwndEdit, TEXT("\0"));
+			szFileName[0]= '\0';
+			szTitleName[0]= '\0';
+			DoCaption(hwnd, szTitleName);
+			bNeedSave= FALSE;
+			return 0;
+		case IDM_FILE_OPEN:
+			if(bNeedSave&&IDCANCEL== AskAboutSave(hwnd, szTitleName))
+				return 0;
+			if(PopFileOpenDlg(hwnd, szFileName, szTitleName))
+			{
+				if(!PopFileRead(hwndEdit, szFileName))
 				{
-					if(!PopFileRead(hwndEdit, szFileName))
-						OkMessage(hwnd, TEXT("Could not read file %s!"),
+					OkMessage(hwnd, TEXT("Could not read file %s!"),
 						szTitleName);
 					szFileName[0]= '\0';
 					szTitleName[0]= '\0';
@@ -216,89 +219,89 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DoCaption(hwnd, szTitleName);
 			bNeedSave= FALSE;
 			return 0;
-			case IDM_FILE_SAVE:
-		if(szFileName[0])
-		{
-			if(PopFileWrite(hwndEdit, szFileName))
+		case IDM_FILE_SAVE:
+			if(szFileName[0])
 			{
-				bNeedSave= FALSE;
-				return 1;
+				if(PopFileWrite(hwndEdit, szFileName))
+				{
+					bNeedSave= FALSE;
+					return 1;
+				}
+				else
+				{
+					OkMessage(hwnd, TEXT("Could not write file %s"),0, szTitleName);
+					return 0;
+				}
 			}
-			else
+			//fall through
+		case IDM_FILE_SAVE_AS:
+			if(PopFileSaveDlg(hwnd, szFileName, szTitleName))
 			{
-				OkMessage(hwnd, TEXT("Could not write file %s"0, szTitleName);
-				return 0;
+				DoCaption(hwnd, szTitleName);
+				if(PopFileWrite(hwndEdit, szFileName))
+				{
+					bNeedSave= FALSE;
+				}
+				else
+				{
+					OkMessage(hwnd, TEXT("Could not write file %s"), szTitleName);
+					return 0;
+				}
 			}
-		}
-		//fall through
-	case IDM_FILE_SAVE_AS:
-		if(PopFileSaveDlg(hwnd, szFileName, szTitleName))
-		{
-			DoCaption(hwnd, szTitleName);
-			if(PopFileWrite(hwndEdit, szFileName))
-			{
-				bNeedSave= FALSE;
-			}
-			else
-			{
-				OkMessage(hwnd, TEXT("Could not write file %s"), szTitleName);
-				return 0;
-			}
-		}
-		return 0;
-	case IDM_FILE_PRINT:
-		if(!PopPrntPrintFile(hInst, hwnd, hwndEdit, szTitleName))
-			OkMessage(hwnd, TEXT("Could not print file %s"), szTitleName);
-		return 0;
-	case IDM_APP_EXIT:
-		SendMessage(hwnd, WM_CLOSE, 0, 0);
-		return 0;
-		//Messages from Edit menu
-	case IDM_EDIT_UNDO:
-		SendMessage(hwndEdit, WM_UNDO, 0, 0);
-		return 0;
-	case IDM_EDIT_CUT:
-		SendMessage(hwndEdit, WM_CUT, 0 ,0);
-		return 0;
-	case IDM_EDIT_COPY:
-		SendMessage(hwndEdit, WM_COPY, 0, 0);
-		return 0;
-	case IDM_EDIT_PASTE:
-		SendMessage(hwndEdit, WM_PASTE, 0, 0);
-		return 0;
-	case IDM_EDIT_CLEAR:
-		SendMessage(hwndEdit, WM_CLEAR, 0, 0);
-		return 0;
-	case IDM_EDIT_SELECT_ALL:
-		SendMessage(hwndEdit, EM_SETSEL, 0, -1);
-		return 0;
-		//Messages from serach menu
-	case IDM_SEARCH_FIND:
-		SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
-		hDlgModeless= PopFindFindDlg(hwnd);
-		return 0;
-	case IDM_SEARCH_NEXT:
-		SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
-		if(PopFindValidFind())
-			PopFindNextText(hwndEdit, &iOffset);
-		else
+			return 0;
+		case IDM_FILE_PRINT:
+			if(!PopPrntPrintFile(hInst, hwnd, hwndEdit, szTitleName))
+				OkMessage(hwnd, TEXT("Could not print file %s"), szTitleName);
+			return 0;
+		case IDM_APP_EXIT:
+			SendMessage(hwnd, WM_CLOSE, 0, 0);
+			return 0;
+			//Messages from Edit menu
+		case IDM_EDIT_UNDO:
+			SendMessage(hwndEdit, WM_UNDO, 0, 0);
+			return 0;
+		case IDM_EDIT_CUT:
+			SendMessage(hwndEdit, WM_CUT, 0 ,0);
+			return 0;
+		case IDM_EDIT_COPY:
+			SendMessage(hwndEdit, WM_COPY, 0, 0);
+			return 0;
+		case IDM_EDIT_PASTE:
+			SendMessage(hwndEdit, WM_PASTE, 0, 0);
+			return 0;
+		case IDM_EDIT_CLEAR:
+			SendMessage(hwndEdit, WM_CLEAR, 0, 0);
+			return 0;
+		case IDM_EDIT_SELECT_ALL:
+			SendMessage(hwndEdit, EM_SETSEL, 0, -1);
+			return 0;
+			//Messages from serach menu
+		case IDM_SEARCH_FIND:
+			SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
 			hDlgModeless= PopFindFindDlg(hwnd);
-		return 0;
-	case IDM_SEARCH_REPLACE:
-		SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
-		hDlgModeless= PopFindReplaceDlg(hwnd);
-		return 0;
-	case IDM_FORMAT_FONT:
-		if(PopFontChooseFont(hwnd))
-			PopFontSetFont(hwndEdit);
-		return 0;
-		//Messages from help menu
-	case IDM_HELP:
-		OkMessage(hwnd, TEXT("Help not yet implemented!"), TEXT("\0"));
-		return 0;
-	case IDM_APP_ABOUT:
-		DialogBox(hInst, TEXT("AboutBox"), hwnd, AboutDlgProc);
-		return 0;
+			return 0;
+		case IDM_SEARCH_NEXT:
+			SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
+			if(PopFindValidFind())
+				PopFindNextText(hwndEdit, &iOffset);
+			else
+				hDlgModeless= PopFindFindDlg(hwnd);
+			return 0;
+		case IDM_SEARCH_REPLACE:
+			SendMessage(hwndEdit, EM_GETSEL, 0, (LPARAM)&iOffset);
+			hDlgModeless= PopFindReplaceDlg(hwnd);
+			return 0;
+		case IDM_FORMAT_FONT:
+			if(PopFontChooseFont(hwnd))
+				PopFontSetFont(hwndEdit);
+			return 0;
+			//Messages from help menu
+		case IDM_HELP:
+			OkMessage(hwnd, TEXT("Help not yet implemented!"), TEXT("\0"));
+			return 0;
+		case IDM_APP_ABOUT:
+			DialogBox(hInst, TEXT("AboutBox"), hwnd, AboutDlgProc);
+			return 0;
 		}
 		break;
 	case WM_CLOSE:
@@ -320,7 +323,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			pfr=(LPFINDREPLACE)lParam;
 			if(pfr->Flags& FR_DIALOGTERM)
 				hDlgModeless= NULL;
-			if(prf->Flags& FR_FINDNEXT)
+			if(pfr->Flags& FR_FINDNEXT)
 				if(!PopFindFindText(hwndEdit, &iOffset, pfr))
 					OkMessage(hwnd, TEXT("Text not found!"), TEXT("\0"));
 			if(pfr->Flags& FR_REPLACE|| pfr->Flags& FR_REPLACEALL)
@@ -331,8 +334,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 		break;
-		}
-		return DefWindowProc(hwnd, message, wParam, lParam);
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 BOOL CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

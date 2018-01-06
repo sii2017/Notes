@@ -42,7 +42,7 @@ void PopFontSetFont(HWND hwndEdit)
 	DeleteObject(hFont);
 	hFont= hFontNew;
 	GetClientRect(hwndEdit, &rect);
-	InvalidateaRect(hwndEdit, &rect, TRUE);
+	InvalidateRect(hwndEdit, &rect, TRUE);
 }
 
 void PopFontDeinitialize(void)

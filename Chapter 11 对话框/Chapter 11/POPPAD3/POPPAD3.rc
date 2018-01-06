@@ -52,12 +52,12 @@ END
 // Menu
 //
 
-PopPad MENU 
+POPPAD MENU 
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&New\tCtrl+N",                40001
-        MENUITEM "&Open...\tCtrl+O",            40002
+        MENUITEM "&New\tCtrl+N",                IDM_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            IDM_FILE_OPEN
         MENUITEM "&Save\tCtrl+S",               40003
         MENUITEM "Save &As...",                 40004
         MENUITEM SEPARATOR
@@ -99,13 +99,27 @@ END
 // Dialog
 //
 
-POPPAD DIALOGEX 0, 0, 316, 182
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+ABOUTBOX DIALOGEX 0, 0, 316, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Dialog"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,205,161,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,259,161,50,14
+    DEFPUSHBUTTON   "OK",IDOK,123,161,50,14
+    CTEXT           "Popup Editor for Windows",IDC_STATIC,71,42,160,20
+    CTEXT           """(c) Charles Petzold, 1998",IDC_STATIC,81,69,141,25
+    ICON            "POPPAD",IDC_STATIC,23,17,21,20
+    CTEXT           "POPPAD",IDC_STATIC,7,47,53,18
+END
+
+PRINTDLGBOX DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "PopPad"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Cancel",IDCANCEL,240,162,50,14
+    CTEXT           "Sending",IDC_STATIC,77,25,90,24
+    CTEXT           " ",DC_FILENAME,82,66,84,30
+    CTEXT           "to print spooler",IDC_STATIC,210,25,76,23
 END
 
 
@@ -153,12 +167,20 @@ POPPAD                  ICON                    "icon1.ico"
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    "POPPAD", DIALOG
+    "ABOUTBOX", DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 309
         TOPMARGIN, 7
         BOTTOMMARGIN, 175
+    END
+
+    "PRINTDLGBOX", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
     END
 END
 #endif    // APSTUDIO_INVOKED
