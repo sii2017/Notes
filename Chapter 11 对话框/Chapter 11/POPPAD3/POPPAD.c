@@ -138,13 +138,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PopFontInitialize(hwndEdit);	//初始化定义font字体
 
 		messageFindReplace= RegisterWindowMessage(FINDMSGSTRING);  //注册一个唯一的新窗口消息供调用
-		DoCaption(hwnd, szTitleName);
+		DoCaption(hwnd, szTitleName);	//如果是新建的则显示无标题，如果是打开别的文件则显示别的文件的名字
 		return 0;
 	case WM_SETFOCUS:
 		SetFocus(hwndEdit);
 		return 0;
 	case WM_SIZE:
-		MoveWindow(hwndEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
+		MoveWindow(hwndEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);	//将对话框子控件变为和主窗口一样大
 		return 0;
 	case WM_INITMENUPOPUP:
 		switch(lParam)
