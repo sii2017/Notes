@@ -149,6 +149,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_INITMENUPOPUP:
 		switch(lParam)
 		{
+		//这里的1和2代表的menuitem在menu中的顺序，01234
 		case 1:	//Edit menu
 			//Enable Undo if edit control can do it
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_UNDO, 
