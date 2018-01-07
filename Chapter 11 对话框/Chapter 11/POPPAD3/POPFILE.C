@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <commdlg.h>
 
+//OPENFILENAME结构包含了GetOpenFileName和GetSaveFileName函数用来初始化打开或另存为对话框的信息。在用户关闭对话框后，系统返回关于用户的选择信息到这个结构中。
 static OPENFILENAME ofn;
 void PopFileInitialize(HWND hwnd)
 {

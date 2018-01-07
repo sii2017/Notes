@@ -134,10 +134,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		SendMessage(hwndEdit, EM_LIMITTEXT, 32000, 0L);
 		//Initialize common dialog box stuff
-		PopFileInitialize(hwnd);
-		PopFontInitialize(hwndEdit);
+		PopFileInitialize(hwnd);	//初始化定义OPENFILENAME相关的结构
+		PopFontInitialize(hwndEdit);	//初始化定义font字体
 
-		messageFindReplace= RegisterWindowMessage(FINDMSGSTRING);
+		messageFindReplace= RegisterWindowMessage(FINDMSGSTRING);  //注册一个唯一的新窗口消息供调用
 		DoCaption(hwnd, szTitleName);
 		return 0;
 	case WM_SETFOCUS:
