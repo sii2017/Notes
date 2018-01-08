@@ -146,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		MoveWindow(hwndEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);	//将对话框子控件变为和主窗口一样大
 		return 0;
-	case WM_INITMENUPOPUP:
+	case WM_INITMENUPOPUP://弹出菜单前进行判断，哪些菜单是灰哪些菜单可选
 		switch(lParam)
 		{
 		//这里的1和2代表的menuitem在menu中的顺序，01234
@@ -157,7 +157,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			//Enable Paste if text is in the clopboard
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_PASTE, 
 				IsClipboardFormatAvailable(CF_TEXT)? MF_ENABLED: MF_GRAYED);
-			//Enable Cut, Copy, and Del if text is selected
+			//Enable Cut, Copy, and Del if text is selected, 发消息检查是不是有内容被选中，来决定让不让剪贴复制和清楚
 			SendMessage(hwndEdit, EM_GETSEL, (WPARAM)&iSelBeg, (LPARAM)&iSelEnd);
 			iEnable= iSelBeg != iSelEnd ? MF_ENABLED: MF_GRAYED;
 			EnableMenuItem((HMENU)wParam, IDM_EDIT_CUT, iEnable);
@@ -176,11 +176,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_COMMAND:
 		//Messages from edit control
-		if(lParam&&LOWORD(wParam)== EDITID)
+		if(lParam&&LOWORD(wParam)== EDITID)	//这个应该是由edit空间发出的，并不是menu
 		{
 			switch(HIWORD(wParam))
 			{
-			case EN_UPDATE:
+			case EN_UPDATE:	//输入板块是否有更新
 				bNeedSave= TRUE;
 				return 0;
 			case EN_ERRSPACE:
@@ -193,8 +193,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		switch(LOWORD(wParam))
 		{
-			//Messages from File menu
-			int a=0;
 		case IDM_FILE_NEW:
 			if(bNeedSave&&IDCANCEL== AskAboutSave(hwnd, szTitleName))
 				return 0;

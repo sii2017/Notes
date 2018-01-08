@@ -38,7 +38,7 @@ BOOL PopFileOpenDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
 	ofn.lpstrFile= pstrFileName;
 	ofn.lpstrFileTitle= pstrTitleName;
 	ofn.Flags= OFN_HIDEREADONLY| OFN_CREATEPROMPT;
-	return GetOpenFileName(&ofn);
+	return GetOpenFileName(&ofn);	//打开文件API
 }
 
 BOOL PopFileSaveDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
@@ -71,7 +71,7 @@ BOOL PopFileRead(HWND hwndEdit, PTSTR pstrFileName)
 	pBuffer= malloc(iFileLength+2);
 
 	//Read file and put terminating zeros at end
-	ReadFile(hFile, pBuffer, iFileLength, &dwBytesRead, NULL);
+	ReadFile(hFile, pBuffer, iFileLength, &dwBytesRead, NULL);//读出的数据先放到swBytesRead再存储到pBuffer里
 	CloseHandle(hFile);
 	pBuffer[iFileLength]= '\0';
 	pBuffer[iFileLength+1]= '\0';
