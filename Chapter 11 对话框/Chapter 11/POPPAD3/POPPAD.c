@@ -1,6 +1,12 @@
 /*
 这个程序中将一些不同的函数写到了不同的文件里，由于他们都在一个文件夹下所以可以调用。
 需要注意的是，在调用的地方，需要在前面写好声明（或者用头文件代替）来通过编译（这样编译器才知道你的调用有没有问题）
+
+本程序一共分为几个部分
+POPPAD为主程序，负责建立窗口及处理各个消息
+POPFONT为设置字体用，仅一次，是个简单的函数
+POPFIND为FIND和REPLACE使用，仅在相关消息中使用
+POPFILE中是调用API来建立打开及保存文件的通用对话框，以及打开文件及获取文件和保存文件相关的内容
 */
 #include <windows.h>
 #include <commdlg.h>
@@ -249,7 +255,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			return 0;
 		case IDM_FILE_PRINT:
-			if(!PopPrntPrintFile(hInst, hwnd, hwndEdit, szTitleName))
+			if(!PopPrntPrintFile(hInst, hwnd, hwndEdit, szTitleName))	//打印功能暂时还没写
+
 				OkMessage(hwnd, TEXT("Could not print file %s"), szTitleName);
 			return 0;
 		case IDM_APP_EXIT:
@@ -307,7 +314,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if(!bNeedSave|| IDCANCEL!= AskAboutSave(hwnd, szTitleName))
 			DestroyWindow(hwnd);
 		return 0;
-	case WM_QUERYENDSESSION:
+	//Windows在关机的时候会想所有顶层窗口广播一个消息WM_QUERYENDSESSION，其lParam参数可以区分是关机还是注销用户(注销用户时lParam是ENDSESSION_LOGOFF)。
+	//Windows会等到所有的应用程序都对这个消息返回TRUE才会关机，因此，只要我们的应用程序对这个消息的处理返回FALSE，Windows就不会关机了。
+	case WM_QUERYENDSESSION://常用来保存信息
 		if(!bNeedSave|| IDCANCEL != AskAboutSave(hwnd, szTitleName))
 			return 1;
 		return 0;

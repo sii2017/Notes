@@ -32,6 +32,7 @@ void PopFileInitialize(HWND hwnd)
 	ofn.lpTemplateName= NULL;
 }
 
+//打开文件的对话框
 BOOL PopFileOpenDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
 {
 	ofn.hwndOwner= hwnd;
@@ -41,6 +42,7 @@ BOOL PopFileOpenDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
 	return GetOpenFileName(&ofn);	//打开文件API
 }
 
+//保存文件对话框
 BOOL PopFileSaveDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
 {
 	ofn.hwndOwner= hwnd;
@@ -48,7 +50,7 @@ BOOL PopFileSaveDlg(HWND hwnd, PTSTR pstrFileName, PTSTR pstrTitleName)
 	ofn.lpstrFileTitle= pstrTitleName;
 	ofn.Flags= OFN_OVERWRITEPROMPT;
 
-	return GetSaveFileName(&ofn);
+	return GetSaveFileName(&ofn);	//保存文件API
 }
 
 BOOL PopFileRead(HWND hwndEdit, PTSTR pstrFileName)
