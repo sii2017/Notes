@@ -23,7 +23,7 @@ BOOL PopFontChooseFont(HWND hwnd)
 	cf.nSizeMin= 0;
 	cf.nSizeMax= 0;
 
-	return ChooseFont(&cf);
+	return ChooseFont(&cf);	//该函数显示选择字体对话框
 }
 void PopFontInitialize(HWND hwndEdit)
 {

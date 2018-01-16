@@ -4,8 +4,8 @@
 
 本程序一共分为几个部分
 POPPAD为主程序，负责建立窗口及处理各个消息
-POPFONT为设置字体用，仅一次，是个简单的函数
-POPFIND为FIND和REPLACE使用，仅在相关消息中使用
+POPFONT为设置字体用，可以调整文本的字体显示
+POPFIND为FIND和REPLACE的API函数使用，仅在相关消息中使用
 POPFILE中是调用API来建立打开及保存文件的通用对话框，以及打开文件及获取文件和保存文件相关的内容
 */
 #include <windows.h>
@@ -78,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInsstance, PSTR szCmdLine
 
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if((hDlgModeless== NULL||!IsDialogMessage(hDlgModeless, &msg)))
+		if((hDlgModeless== NULL||!IsDialogMessage(hDlgModeless, &msg)))	//IsDialogMessage是为非模态对话框准备的，也就是本程序中的find和replace的dlg
 		{
 			if(!TranslateAccelerator(hwnd, hAccel, &msg))
 			{

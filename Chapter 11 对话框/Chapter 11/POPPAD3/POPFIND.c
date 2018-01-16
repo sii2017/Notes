@@ -21,7 +21,7 @@ HWND PopFindFindDlg(HWND hwnd)
 	fr.lpfnHook= NULL;
 	fr.lpTemplateName= NULL;
 
-	return FindText(&fr);
+	return FindText(&fr);	//ËÑË÷API
 }
 
 HWND PopFindReplaceDlg(HWND hwnd)
@@ -40,7 +40,7 @@ HWND PopFindReplaceDlg(HWND hwnd)
 	fr.lpfnHook= NULL;
 	fr.lpTemplateName= NULL;
 
-	return ReplaceText(&fr);
+	return ReplaceText(&fr);	//¿ìËÙÌæ»»API
 }
 
 BOOL PopFindFindText(HWND hwndEdit, int* piSearchOffset, LPFINDREPLACE pfr)

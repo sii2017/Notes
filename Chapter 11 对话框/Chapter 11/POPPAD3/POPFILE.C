@@ -16,7 +16,7 @@ void PopFileInitialize(HWND hwnd)
 	ofn.lpstrFilter= szFilter;
 	ofn.lpstrCustomFilter= NULL;
 	ofn.nMaxCustFilter= 0;
-	ofn.nFilterIndex= 0;
+	ofn.nFilterIndex= 0;		//筛选条件，文件对话框最下面一行用来选格式的
 	ofn.lpstrFile= NULL;
 	ofn.nMaxFile= MAX_PATH;
 	ofn.lpstrFileTitle= NULL;
