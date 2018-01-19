@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLIPTEXT", "CLIPTEXT\CLIPTEXT.vcproj", "{7A4B1930-A7E3-432A-9D22-00A42B268277}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLIPVIEW", "CLIPVIEW\CLIPVIEW.vcproj", "{A937A97E-BA90-4CD7-A32E-D65FB59EE50F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{7A4B1930-A7E3-432A-9D22-00A42B268277}.Debug|Win32.Build.0 = Debug|Win32
 		{7A4B1930-A7E3-432A-9D22-00A42B268277}.Release|Win32.ActiveCfg = Release|Win32
 		{7A4B1930-A7E3-432A-9D22-00A42B268277}.Release|Win32.Build.0 = Release|Win32
+		{A937A97E-BA90-4CD7-A32E-D65FB59EE50F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A937A97E-BA90-4CD7-A32E-D65FB59EE50F}.Debug|Win32.Build.0 = Debug|Win32
+		{A937A97E-BA90-4CD7-A32E-D65FB59EE50F}.Release|Win32.ActiveCfg = Release|Win32
+		{A937A97E-BA90-4CD7-A32E-D65FB59EE50F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
