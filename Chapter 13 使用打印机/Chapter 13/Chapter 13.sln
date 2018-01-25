@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GETPRNDC", "GETPRNDC\GETPRNDC.vcproj", "{BF2783E0-E85F-4EBD-B189-D579CED0A129}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DEVCAPS2", "DEVCAPS2\DEVCAPS2.vcproj", "{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF2783E0-E85F-4EBD-B189-D579CED0A129}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BF2783E0-E85F-4EBD-B189-D579CED0A129}.Debug|Win32.Build.0 = Debug|Win32
+		{BF2783E0-E85F-4EBD-B189-D579CED0A129}.Release|Win32.ActiveCfg = Release|Win32
+		{BF2783E0-E85F-4EBD-B189-D579CED0A129}.Release|Win32.Build.0 = Release|Win32
+		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Debug|Win32.Build.0 = Debug|Win32
+		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Release|Win32.ActiveCfg = Release|Win32
+		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
