@@ -74,8 +74,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ReleaseDC(hwnd, hdc);
 		//fall through
 	case WM_SETTINGCHANGE:
-		hMenu= GetSubMenu(GetMenu(hwnd), 0);
-		while(GetMenuItemCount(hMenu)>1)
+		hMenu= GetSubMenu(GetMenu(hwnd), 0);	//取得被指定菜单激活的下拉式菜单或子菜单的句柄。获得Menu中0位置的菜单句柄，也就是第一列的句柄
+		while(GetMenuItemCount(hMenu)>1)	//返回菜单中条目（菜单项）的数量
 			DeleteMenu(hMenu, 1, MF_BYPOSITION);
 		if(GetVersion()&0x80000000)	//windows 98
 		{
@@ -97,12 +97,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				&dwNeeded, &dwReturned);
 			for(i=0; i<dwReturned; i++)
 			{
-				AppendMenu(hMenu, (i+1)%16?0:MF_MENUBARBREAK, i+1, pinfo4[i].pPrinterName);
+				AppendMenu(hMenu, (i+1)%16?0:MF_MENUBARBREAK, i+1, pinfo4[i].pPrinterName);		//？1
 			}
 			free(pinfo4);
 		}
 		AppendMenu(hMenu, MF_SEPARATOR, 0 ,NULL);
-		AppendMenu(hMenu, 0, IDM_DEVMODE, TEXT("Properties"));
+		AppendMenu(hMenu, 0, IDM_DEVMODE, TEXT("Properties"));	//在位置0的主菜单下增加properites项
 		wParam= IDM_SCREEN;
 		//fall through
 	case WM_COMMAND:
@@ -118,30 +118,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			GetMenuString(hMenu, nCurrentDevice, szDevice, 
 				sizeof(szDevice)/sizeof(TCHAR), MF_BYCOMMAND);
-			if(OpenPrinter(szDevice, &hPrint, NULL))
+			if(OpenPrinter(szDevice, &hPrint, NULL))	//获取指定打印机或打印服务器的标识句柄存储在Print中
 			{
-				PrinterProperties(hwnd, hPrint);
+				PrinterProperties(hwnd, hPrint);	//启动打印机属性对话框
 				ClosePrinter(hPrint);
 			}
 		}
 		else
 		{
+			//将之前菜单项取消选中，然后选中现在的菜单项
 			CheckMenuItem(hMenu, nCurrentInfo, MF_UNCHECKED);
 			nCurrentInfo= LOWORD(wParam);
 			CheckMenuItem(hMenu, nCurrentInfo, MF_CHECKED);
 		}
 		InvalidateRect(hwnd, NULL, TRUE);
 		return 0;
-	case WM_INITMENUPOPUP:
-		if(lParam==0)
-			EnableMenuItem(GetMenu(hwnd), IDM_DEVMODE, nCurrentDevice== IDM_SCREEN?MF_GRAYED:MF_ENABLED);
+	case WM_INITMENUPOPUP:	//菜单弹出前发送的消息
+		if(lParam==0)	//如果打开的是第0列menu
+			EnableMenuItem(GetMenu(hwnd), IDM_DEVMODE, nCurrentDevice==IDM_SCREEN?MF_GRAYED:MF_ENABLED);	//只要不是screen则让properties可用（毕竟screen没有properties），点击可以启动打印机属性对话框
 		return 0;
 	case WM_PAINT:
 		lstrcpy(szWindowText, TEXT("Device Capabilities:"));
 		if(nCurrentDevice==IDM_SCREEN)
 		{
 			lstrcpy(szDevice, TEXT("DISPLAY"));
-			hdcInfo= CreateIC(szDevice, NULL, NULL, NULL);
+			hdcInfo= CreateIC(szDevice, NULL, NULL, NULL);	//与CreateDC的区别是，只能用于获取信息，不能用于绘图，句柄不能用于GDI函数
 		}
 		else
 		{
