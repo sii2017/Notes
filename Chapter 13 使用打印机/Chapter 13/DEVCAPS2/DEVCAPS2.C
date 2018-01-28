@@ -152,7 +152,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hdcInfo= CreateIC(NULL, szDevice, NULL, NULL);
 		}
 		lstrcat(szWindowText, szDevice);
-		SetWindowText(hwnd, szWindowText);
+		SetWindowText(hwnd, szWindowText);	//将窗口的标题改成当前打印机的名字
 
 		hdc= BeginPaint(hwnd, &ps);
 		SelectObject(hdc, GetStockObject(SYSTEM_FIXED_FONT));
