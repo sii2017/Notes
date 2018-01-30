@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GETPRNDC", "GETPRNDC\GETPRN
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DEVCAPS2", "DEVCAPS2\DEVCAPS2.vcproj", "{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FORMFEED", "FORMFEED\FORMFEED.vcproj", "{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Debug|Win32.Build.0 = Debug|Win32
 		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Release|Win32.ActiveCfg = Release|Win32
 		{5C2DB83E-EC79-4372-A49C-2B13DE92DF05}.Release|Win32.Build.0 = Release|Win32
+		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Debug|Win32.Build.0 = Debug|Win32
+		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Release|Win32.ActiveCfg = Release|Win32
+		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

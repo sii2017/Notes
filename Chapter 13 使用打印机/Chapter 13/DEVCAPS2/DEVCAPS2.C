@@ -1,3 +1,7 @@
+/*
+本程序并没有看上去那么庞大，一半代码为输出显示的内容。
+其余部分为获取打印机设置句柄，并启动打印机属性对话框。以及少量的菜单相关的操作。
+*/
 #include <windows.h>
 #include "resource.h"
 
@@ -135,7 +139,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_INITMENUPOPUP:	//菜单弹出前发送的消息
 		if(lParam==0)	//如果打开的是第0列menu
-			EnableMenuItem(GetMenu(hwnd), IDM_DEVMODE, nCurrentDevice==IDM_SCREEN?MF_GRAYED:MF_ENABLED);	//只要不是screen则让properties可用（毕竟screen没有properties），点击可以启动打印机属性对话框
+			EnableMenuItem(GetMenu(hwnd), IDM_DEVMODE, nCurrentDevice==IDM_SCREEN?MF_GRAYED:MF_ENABLED);	//properties必须要选择打印机才可用（毕竟screen没有properties），点击可以启动打印机属性对话框
 		return 0;
 	case WM_PAINT:
 		lstrcpy(szWindowText, TEXT("Device Capabilities:"));
