@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DEVCAPS2", "DEVCAPS2\DEVCAP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FORMFEED", "FORMFEED\FORMFEED.vcproj", "{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRINT", "PRINT\PRINT.vcproj", "{1AA1A208-18D3-445A-A9D1-DECCCF3C0E41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +27,10 @@ Global
 		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Debug|Win32.Build.0 = Debug|Win32
 		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Release|Win32.ActiveCfg = Release|Win32
 		{BEC055D1-6C94-4084-9ADA-1B5C8B761ACC}.Release|Win32.Build.0 = Release|Win32
+		{1AA1A208-18D3-445A-A9D1-DECCCF3C0E41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1AA1A208-18D3-445A-A9D1-DECCCF3C0E41}.Debug|Win32.Build.0 = Debug|Win32
+		{1AA1A208-18D3-445A-A9D1-DECCCF3C0E41}.Release|Win32.ActiveCfg = Release|Win32
+		{1AA1A208-18D3-445A-A9D1-DECCCF3C0E41}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
