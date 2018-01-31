@@ -171,7 +171,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\GETPRNDC.C"
+				>
+			</File>
+			<File
 				RelativePath=".\PRINT.C"
+				>
+			</File>
+			<File
+				RelativePath=".\PRINT1.C"
 				>
 			</File>
 		</Filter>

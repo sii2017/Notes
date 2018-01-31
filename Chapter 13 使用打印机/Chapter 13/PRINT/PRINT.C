@@ -51,16 +51,17 @@ void PageGDICalls(HDC hdcPrn, int cxPage, int cyPage)
 	MoveToEx(hdcPrn, cxPage, 0, NULL);
 	LineTo(hdcPrn, 0, cyPage);	//对角线
 
-	SaveDC(hdcPrn);
+	SaveDC(hdcPrn);	//保存住现在的hdc，因为之后的操作会改变映射模式等等的内容
 
 	SetMapMode(hdcPrn, MM_ISOTROPIC);
 	SetWindowExtEx(hdcPrn, 1000, 1000, NULL);
-	SetViewportExt(hdcPrn, cxPage/2, -cyPage/2, NULL);
+	SetViewportExtEx(hdcPrn, cxPage/2, -cyPage/2, NULL);
 	SetViewportOrgEx(hdcPrn, cxPage/2, cyPage/2, NULL);
 
 	Ellipse(hdcPrn, -500, 500, 500, -500);
-	SetTextAlign(hdcPrn, 0, 0, szTextStr, lstrlen(szTextStr));
-	RestoreDC(hdcPrn, -1);
+	SetTextAlign(hdcPrn, TA_BASELINE| TA_CENTER);
+	TextOut(hdcPrn, 0, 0, szTextStr, lstrlen(szTextStr));
+	RestoreDC(hdcPrn, -1);//恢复之前的hdc
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -69,19 +70,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	HMENU hMenu;
 	PAINTSTRUCT ps;
+	BOOL ace, abe;
 	switch(message)
 	{
 	case WM_CREATE:
 		hMenu= GetSystemMenu(hwnd, FALSE);
-		AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
-		AppendMenu(hMenu, 0, 1, TEXT("&Print"));
+		ace= AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+		abe= AppendMenu(hMenu, 0, 1, TEXT("&Print"));	//这是加在系统菜单里，即最左上角
 		return 0;
 	case WM_SIZE:
 		cxClient= LOWORD(lParam);
 		cyClient= HIWORD(lParam);
 		return 0;
 	case WM_SYSCOMMAND:
-		if(wParam==1)
+		if(wParam==1)	//Print设置的ID 就是1
 		{
 			if(!PrintMyPage(hwnd))
 				MessageBox(hwnd, TEXT("Could not print page!"), szAppName, 
