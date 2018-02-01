@@ -1,0 +1,202 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+POPPAD MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                IDM_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            IDM_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S",               40003
+        MENUITEM "Save &As...",                 40004
+        MENUITEM SEPARATOR
+        MENUITEM "&Print\tCtrl+P",              40005
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       40006
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               40007
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                40008
+        MENUITEM "&Copy\tCtrl+C",               40009
+        MENUITEM "&Paste\tCtrl+V",              40010
+        MENUITEM "De&lete\tDel",                40011
+        MENUITEM SEPARATOR
+        MENUITEM "&Selete All",                 IDM_EDIT_SELECT_ALL
+    END
+    POPUP "&Search"
+    BEGIN
+        MENUITEM "&Find...\tCtrl+F",            40014
+        MENUITEM "Find &Next\tF3",              IDM_SEARCH_REPLACE
+        MENUITEM "&Replace...\tCtrl+R",         IDM_SEARCH_REPLACE
+    END
+    POPUP "F&ormat"
+    BEGIN
+        MENUITEM "&Font...",                    40016
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help",                       40017
+        MENUITEM "&About PopPad...",            40018
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+ABOUTBOX DIALOGEX 0, 0, 316, 182
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,123,161,50,14
+    CTEXT           "Popup Editor for Windows",IDC_STATIC,71,42,160,20
+    CTEXT           """(c) Charles Petzold, 1998",IDC_STATIC,81,69,141,25
+    ICON            "POPPAD",IDC_STATIC,23,17,21,20
+    CTEXT           "POPPAD",IDC_STATIC,7,47,53,18
+END
+
+PRINTDLGBOX DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "PopPad"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Cancel",IDCANCEL,240,162,50,14
+    CTEXT           "Sending",IDC_STATIC,77,25,90,24
+    CTEXT           " ",DC_FILENAME,82,66,84,30
+    CTEXT           "to print spooler",IDC_STATIC,210,25,76,23
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+POPPAD ACCELERATORS 
+BEGIN
+    VK_BACK,        IDM_EDIT_UNDO,          VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      IDM_EDIT_CLEAR,         VIRTKEY, NOINVERT
+    VK_DELETE,      IDM_EDIT_CUT,           VIRTKEY, SHIFT, NOINVERT
+    VK_F1,          IDM_HELP,               VIRTKEY, NOINVERT
+    VK_F3,          IDM_SEARCH_NEXT,        VIRTKEY, NOINVERT
+    VK_INSERT,      IDM_EDIT_COPY,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      IDM_EDIT_PASTE,         VIRTKEY, SHIFT, NOINVERT
+    "^C",           IDM_EDIT_COPY,          ASCII,  NOINVERT
+    "^F",           IDM_SEARCH_FIND,        ASCII,  NOINVERT
+    "^N",           IDM_FILE_NEW,           ASCII,  NOINVERT
+    "^O",           IDM_FILE_OPEN,          ASCII,  NOINVERT
+    "^P",           IDM_FILE_PRINT,         ASCII,  NOINVERT
+    "^R",           IDM_SEARCH_REPLACE,     ASCII,  NOINVERT
+    "^S",           IDM_FILE_SAVE,          ASCII,  NOINVERT
+    "^V",           IDM_EDIT_PASTE,         ASCII,  NOINVERT
+    "^X",           IDM_EDIT_CUT,           ASCII,  NOINVERT
+    "^Z",           IDM_EDIT_UNDO,          ASCII,  NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+POPPAD                  ICON                    "icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    "ABOUTBOX", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 175
+    END
+
+    "PRINTDLGBOX", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
