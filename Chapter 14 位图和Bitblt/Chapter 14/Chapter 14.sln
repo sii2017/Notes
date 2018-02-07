@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BOUNCE", "BOUNCE\BOUNCE.vcp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SCRAMBLE", "SCRAMBLE\SCRAMBLE.vcproj", "{650D4D25-FE90-4C11-B3EB-63E358CB65DD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BLOWUP", "BLOWUP\BLOWUP.vcproj", "{1C32F230-6C0A-4C80-B0A5-D148C9E5D3FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -73,6 +75,10 @@ Global
 		{650D4D25-FE90-4C11-B3EB-63E358CB65DD}.Debug|Win32.Build.0 = Debug|Win32
 		{650D4D25-FE90-4C11-B3EB-63E358CB65DD}.Release|Win32.ActiveCfg = Release|Win32
 		{650D4D25-FE90-4C11-B3EB-63E358CB65DD}.Release|Win32.Build.0 = Release|Win32
+		{1C32F230-6C0A-4C80-B0A5-D148C9E5D3FD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C32F230-6C0A-4C80-B0A5-D148C9E5D3FD}.Debug|Win32.Build.0 = Debug|Win32
+		{1C32F230-6C0A-4C80-B0A5-D148C9E5D3FD}.Release|Win32.ActiveCfg = Release|Win32
+		{1C32F230-6C0A-4C80-B0A5-D148C9E5D3FD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

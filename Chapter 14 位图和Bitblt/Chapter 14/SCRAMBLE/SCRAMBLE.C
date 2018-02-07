@@ -1,3 +1,6 @@
+/*
+整个屏幕出现方块形的马赛克
+*/
 #include <windows.h>
 #define NUM 300
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -11,15 +14,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	HWND hwnd;
 	int i,j,x1,y1,x2,y2;
 
-	if(LockWindowUpdate(hwnd= GetDesktopWindow()))	//防止其它程序更新屏幕
+	if(LockWindowUpdate(hwnd= GetDesktopWindow()))	//防止其它程序更新整个屏幕
 	{
+		//获得整个屏幕的设备内容
 		hdcScr= GetDCEx(hwnd, NULL, DCX_CACHE| DCX_LOCKWINDOWUPDATE);
 		hdcMem= CreateCompatibleDC(hdcScr);
 		cx= GetSystemMetrics(SM_CXSCREEN)/10;
 		cy= GetSystemMetrics(SM_CYSCREEN)/10;
-		hBitmap= CreateCompatibleBitmap(hdcScr, cx, cy);
+		hBitmap= CreateCompatibleBitmap(hdcScr, cx, cy);//获取屏幕图片除以十来建立位图
 
-		SelectObject(hdcMem, hBitmap);
+		SelectObject(hdcMem, hBitmap);//位图选入内存
 		srand((int)GetCurrentTime());
 
 		for(i=0; i<2; i++)
@@ -39,6 +43,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 					x2= iKeep[NUM-1-j][2];
 					y2= iKeep[NUM-1-j][3];
 				}
+				//第一次将从第一个坐标点开始的矩形复制到内存设备内容。
+				//第二次BitBlt将从第二坐标点开始的矩形复制到第一点开始的位置。
+				//第三次将内存设备内容中的矩形复制到第二个坐标点开始的区域。
 				BitBlt(hdcMem, 0, 0, cx, cy, hdcScr, x1, y1, SRCCOPY);
 				BitBlt(hdcScr, x1, y1, cx, cy, hdcScr, x2, y2, SRCCOPY);
 				BitBlt(hdcScr, x2, y2, cx, cy, hdcMem, 0, 0, SRCCOPY);
@@ -49,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		ReleaseDC(hwnd, hdcScr);
 		DeleteObject(hBitmap);
 
-		LockWindowUpdate(NULL);
+		LockWindowUpdate(NULL);	//解除桌面锁定
 	}
 	return FALSE;
 }
