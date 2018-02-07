@@ -1,3 +1,6 @@
+/*
+用位图替换菜单的显示。但是本程序无法实现，因为书中并未写明如何在不创建弹出菜单的情况下建立弹出菜单下面的子菜单。
+*/
 #include <windows.H>
 #include "resource.h"
 
@@ -11,7 +14,7 @@ TCHAR szAppName[]= TEXT("GrafMenu");
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
-	//窗口创建与平时大致一样，只是szAppName设置到外面了
+	//窗口创建与平时大致一样，只是szAppName设置为全局函数了
 	HWND hwnd;
 	MSG msg;
 	WNDCLASS wndclass;
@@ -37,13 +40,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
 		NULL, NULL, hInstance, NULL);
 
-	//new
-	if(hwnd== NULL)
-	{
-		MessageBox(NULL, TEXT("Not enough memory to create bitmap!"), szAppName, MB_ICONERROR);
-		return 0;
-	}
-
 	ShowWindow(hwnd, iCmdShow);
 	UpdateWindow(hwnd);
 	while(GetMessage(&msg, NULL, 0,0))
@@ -57,7 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam,LPARAM lParam)
 {
 	HMENU hMenu;
-	static int iCurrentFont= IDM_FONT_COUR;
+	static int iCurrentFont= IDM_FONT_COUR;	//当前字体
 
 	switch(iMsg)
 	{

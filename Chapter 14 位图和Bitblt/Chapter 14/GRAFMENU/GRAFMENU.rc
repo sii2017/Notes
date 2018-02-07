@@ -55,6 +55,7 @@ END
 BitmapEdit              BITMAP                  "EDITLABL.bmp"
 BitmapFile              BITMAP                  "FILELABL.bmp"
 BitmapFont              BITMAP                  "FONTLABL.bmp"
+BitmapHelp              BITMAP                  "BIGHELP.bmp"
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
