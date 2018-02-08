@@ -1,3 +1,7 @@
+/*
+这个程序是通过左键右键的交互操作，截图一部分内容（客户端外），然后拉伸复制到客户端显示区域。   
+具体操作为，截图后复制到位图，然后将位图复制到画面。
+*/
 #include <windows.h>
 #include <stdlib.h>
 #include "resource.h"
@@ -129,7 +133,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
-		if(bBlocking)
+		if(bBlocking)//根据鼠标位置截取内容复制到hdc的画面上
 		{
 			InvertBlock(hwndScr, hwnd, ptBeg, ptEnd);
 			ptEnd.x= LOWORD(lParam);
@@ -141,17 +145,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			hdc =GetDC(hwnd);
 			hdcMem= CreateCompatibleDC(hdc);
+			//abs函数用来求绝对值
 			hBitmap= CreateCompatibleBitmap(hdc, abs(ptEnd.x- ptBeg.x), 
 				abs(ptEnd.y- ptBeg.y));
 			SelectObject(hdcMem, hBitmap);
 
+			//将画面复制到mem的位图上
 			StretchBlt(hdcMem, 0,0, abs(ptEnd.x- ptBeg.x), abs(ptEnd.y- ptBeg.y),
 				hdc, ptBeg.x, ptBeg.y, ptEnd.x- ptBeg.x, ptEnd.y- ptBeg.y, SRCCOPY);
 			DeleteDC(hdcMem);
 			ReleaseDC(hwnd, hdc);
 			InvalidateRect(hwnd, NULL, TRUE);
 		}
-		if(bBlocking|| bCapturing)
+		if(bBlocking|| bCapturing)	//将bool设为false同时变回鼠标的样子
 		{
 			bBlocking= bCapturing= FALSE;
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
@@ -215,6 +221,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SelectObject(hdcMem, hBitmap);
 			GetObject(hBitmap, sizeof(BITMAP), (PSTR)&bm);
 			SetStretchBltMode(hdc, COLORONCOLOR);
+			//将men的位图复制到hdc上的画面
 			StretchBlt(hdc, 0,0, rect.right, rect.bottom, hdcMem, 0, 0,
 				bm.bmWidth, bm.bmHeight, SRCCOPY);
 			DeleteDC(hdcMem);
