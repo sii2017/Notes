@@ -57,6 +57,7 @@ void Printf(HWND hwnd, TCHAR* szFormat, ...)
 	va_end(pArgList);
 
 	SendMessage(hwnd, EM_SETSEL, (WPARAM)-1, (LPARAM)-1);
+	//SendMessage(hwnd, EM_SETSEL, 0, 0);
 	SendMessage(hwnd, EM_REPLACESEL, FALSE, (LPARAM)szBuffer);
 	SendMessage(hwnd, EM_SCROLLCARET, 0, 0);	//将光标移至可见位置
 }
