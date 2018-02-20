@@ -1,3 +1,11 @@
+/*
+主要功能是显示DIB，并且可以打开，保存DIB
+需要关注有二
+1 使用了DIBFILE.C中封装的一些API函数
+2 对DIB进行了判断，是老版本还是新版本
+旧的DIB形式以BITMAPFILEHEADER结构开始，接着BITMAPCOREHEADER结构。新版本扩展DIB同样以BITMAPFILEHEADER结构开始，但是接着是BITMAPINFOHEADER结构
+由于加载到内存中，会省去开头的BITMAPFILEHADER结构，所以直接套用类型指针，就可以判断了。
+*/
 #include <windows.h>
 #include "dibfile.h"
 #include "resource.h"
@@ -99,6 +107,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			pbmi= (BITMAPINFO*)(pbmfh+1);
 			pBits= (BYTE*)pbmfh+ pbmfh->bfOffBits;
 			//Get the DIB width and height
+			/*
+			旧的DIB形式以BITMAPFILEHEADER结构开始，接着BITMAPCOREHEADER结构。新版本扩展DIB同样以BITMAPFILEHEADER结构开始，但是接着是BITMAPINFOHEADER结构
+			由于加载到内存中，会省去开头的BITMAPFILEHADER结构，所以直接套用类型指针，就可以判断了。
+			*/
 			if(pbmi->bmiHeader.biSize== sizeof(BITMAPCOREHEADER))
 			{
 				cxDib= ((BITMAPCOREHEADER*)pbmi)->bcWidth;

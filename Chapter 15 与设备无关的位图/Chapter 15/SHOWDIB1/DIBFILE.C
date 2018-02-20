@@ -1,3 +1,7 @@
+/*
+这里封装了一些主程序会使用的，包含API函数的函数。
+主要是打开、保存、读取等等
+*/
 #include <windows.h>
 #include <commdlg.h>
 #include "dibfile.h"
