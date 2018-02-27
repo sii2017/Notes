@@ -166,7 +166,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			//Get the DIB width and height
 			bTopDown= FALSE;
-			if(pbmi->bmiHeader.biSize== sizeof(BITMAPCOREHEADER))
+			if(pbmi->bmiHeader.biSize== sizeof(BITMAPCOREHEADER))	//旧版是BITMAPCONREHEADER，新版是BITMAPINFOHEADER，根据大小来判断新的还是旧的
 			{
 				cxDib= ((BITMAPCOREHEADER*)pbmi)->bcWidth;
 				cyDib= ((BITMAPCOREHEADER*)pbmi)->bcHeight;
@@ -198,7 +198,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetCursor(LoadCursor(NULL, IDC_WAIT));
 			ShowCursor(TRUE);
 			hdc= GetDC(hwnd);
-			for(y=0; y<cyDib; y++)
+			for(y=0; y<cyDib; y++)	//一行行显示
 			{
 				ReadFile(hFile, pBits+ y*iRowLength, iRowLength,&dwBytesRead, NULL);
 				SetDIBitsToDevice(hdc, 0,0,cxDib, cyDib, 0,0,bTopDown?cyDib-y-1:y,
