@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APOLLO11", "APOLLO11\APOLLO
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SEQDISP", "SEQDISP\SEQDISP.vcproj", "{A1E695E5-077A-4ED9-AEAD-31440E1740DC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SHOWDIB2", "SHOWDIB2\SHOWDIB2.vcproj", "{ADDC3F82-F01F-4A66-B99F-E4DF08F2C76B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{A1E695E5-077A-4ED9-AEAD-31440E1740DC}.Debug|Win32.Build.0 = Debug|Win32
 		{A1E695E5-077A-4ED9-AEAD-31440E1740DC}.Release|Win32.ActiveCfg = Release|Win32
 		{A1E695E5-077A-4ED9-AEAD-31440E1740DC}.Release|Win32.Build.0 = Release|Win32
+		{ADDC3F82-F01F-4A66-B99F-E4DF08F2C76B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ADDC3F82-F01F-4A66-B99F-E4DF08F2C76B}.Debug|Win32.Build.0 = Debug|Win32
+		{ADDC3F82-F01F-4A66-B99F-E4DF08F2C76B}.Release|Win32.ActiveCfg = Release|Win32
+		{ADDC3F82-F01F-4A66-B99F-E4DF08F2C76B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,3 +1,9 @@
+/*
+这个程序一样做了个窗口，然后通过循环来使用SetDIBitsToDevice函数画出图像。
+需要注意的是，WM_PAINT里面也有一个SetDIBitsToDevice让我一度很疑惑，最终了解到：
+WM_COMMAND里的SetDIBitsToDevice是真正用来画图像的，WM_PAINT里面的SetDIBitsToDevice则是在调整大小的时候重绘图像
+如果少了WM_COMMAND里的SetDIBitsToDevice则不会有图像，而如果少了WM_PAINT里的SetDIBitsToDevice则一开始有图像，调整窗口大小后没图像。
+*/
 #include <windows.h>
 #include "resource.h"
 
@@ -214,7 +220,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc= BeginPaint(hwnd, &ps);
-		if(pbmi&& pBits)
+		if(pbmi&& pBits)	//当窗口调整大小的时候，这里的SetDIBitsToDevice重新绘图（一次性）。
 			SetDIBitsToDevice(hdc, 0,0, cxDib, cyDib, 0,0,0,cyDib,pBits,pbmi, DIB_RGB_COLORS);
 		EndPaint(hwnd, &ps);
 		return 0;
