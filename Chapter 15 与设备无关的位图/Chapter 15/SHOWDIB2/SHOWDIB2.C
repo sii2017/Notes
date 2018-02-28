@@ -6,6 +6,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 TCHAR szAppName[]= TEXT("ShowDib2");
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+	//没什么区别，有快捷键
 	HACCEL hAccel;
 	HWND hwnd;
 	MSG msg;
@@ -101,6 +102,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		cyClient= HIWORD(lParam);
 		return 0;
 	case WM_INITMENUPOPUP:
+		//弹出菜单前验证菜单是否可选
 		hMenu= GetMenu(hwnd);
 		if(pbmfh)
 			iEnable= MF_ENABLED;
@@ -142,7 +144,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				return 0;
 			}
 			//Get pointers to the info structrue& the bits
-			pbmi= (BITMAPINFO*)(pbmfh+1);
+			//BITMAPINFO是由BITMAPCOREHEADER信息表头和RGBTRIPLE定义在一起
+			//pbmfh+1的意思就是pbmfh位移sizeof(BITMAPFILEHEADER)个位置
+			pbmi= (BITMAPINFO*)(pbmfh+1);	
 			pBits= (BYTE*)pbmfh+ pbmfh->bfOffBits;
 			//Get the DIB width and height
 			if(pbmi->bmiHeader.biSize== sizeof(BITMAPCOREHEADER))
