@@ -120,6 +120,80 @@ DIBSECT首先读取BITMAPFILEHEADER结构中的信息，然后确定BITMAPINFO�
 ps：个人理解，如果有初始化则在初始化的时候转化如2，如果没有则在调用显示函数的时候进行转换。    
 这是从CreateDIBSection传回的位图句柄不同于我们所遇到的其它位图句柄的一个地方。**此位图句柄实际上指向储存在内存中由系统维护但应用程序能存取的DIB。**在需要的时候，DIB会转化为特定的色彩格式，通常是在用BitBlt或StretchBlt显示位图时。
 ### DIB区块的其它区别
-从CreateDIBitmap传回的位图句柄与函数的hdc参数引用的设备有相同的平面和图素字节。
+从CreateDIBitmap传回的位图句柄与函数的hdc参数引用的设备有相同的平面和图素字节。   
+CreateDIBSection就不同了。如果以该函数传回的位图句柄的BITMAP结构呼叫GetObject，您会发现位图具有的色彩组织与BITMAPINFOHEADER结构的字段指出的色彩组织相同。（**与设备内容不同，因为他没有使用hdc参数**）您能将这个句柄选入与视讯显示器兼容的内存设备内容。这与上一章关于DDB的内容相矛盾，但这也就是我说此DIB区块位图句柄不同的原因。  
+**注意：CreateDIBitmap创建的是设备相关位图句柄HBITMAP。CreateDIBSection创建的是设备无关位图句柄HBITMAP。这两个HBITMAP是不一样的。    
+CreateDIBSection创建的是一个DIBSECTION结构，而CreateDIBitmap创建的是BITMAP结构。**   
+另一个奇妙之处是：你可能还记得，DIB中图素数据行的位组长度始终是4的倍数。GDI位图对象中行的位组长度，就是使用GetObject从BITMAP结构的bmWidthBytes字段中得到的长度，始终是2的倍数。如果用每图素24位和宽度2图素设定BITMAPINFOHEADER结构并随后呼叫GetObject，您就会发现bmWidthBytes字段是8而不是6。    
+使用从CreateDIBSection传回的位图句柄，也可以使用DIBSECTION结构呼叫GetObject：    
+```c
+GetObject (hBitmap, sizeof (DIBSECTION), &dibsection) ;   
+```   
+此函数不能处理其它位图建立函数传回的位图句柄。DIBSECTION结构定义如下：    
+```c
+typedef struct tagDIBSECTION // ds   
+{   
+	BITMAP dsBm ;//BITMAP structure  
+	BITMAPINFOHEADER dsBmih;//DIB information header    
+	DWORD dsBitfields [3];//color masks    
+	HANDLE dshSection;//file-mapping object handle    
+	DWORD dsOffset;// offset to bitmap bits    
+}    
+DIBSECTION, * PDIBSECTION ;   
+```     
+此结构包含BITMAP结构和BITMAPINFOHEADER结构。最后两个字段是传递给CreateDIBSection的最后两个参数，等一下将会讨论它们。   
+DIBSECTION结构中包含除了色彩对照表以外有关位图的许多内容。当把DIB区块位图句柄选入内存设备内容时，可以通过调用GetDIBColorTable来得到色彩对照表：    
+```c
+hdcMem = CreateCompatibleDC (NULL) ;   
+SelectObject (hdcMem, hBitmap) ;    
+GetDIBColorTable (hdcMem, uFirstIndex, uNumEntries, &rgb) ;   
+DeleteDC (hdcMem) ;    
+```   
+同样，我们可以通过调用SetDIBColorTable来设定色彩对照表中的项目。
 ### 文件映像选项
+CreateDIBSection的最后两个参数，它们是文件映像对象的句柄和文件中位图位开始的偏移量。文件映像对象使您能够像文件位于内存中一样处理文件。也就是说，可以通过使用内存指针来存取文件，但文件不需要整个加载内存中。   
+在大型DIB的情况下，此技术对于减少内存需求是很有帮助的。**DIB图素位能够储存在磁盘上（但是不是原本的DIB文件）**，但仍然可以当作位于内存中一样进行存取，虽然会影响程序执行效能。问题是，当图素位实际上储存在磁盘上时，它们不可能是实际DIB文件的一部分。它们必须位于其它的文件内。   
+为了展示这个程序，下面显示的函数除了不把图素位读入内存以外，与DIBSECT中建立DIB区块的函数很相似。然而，它提供了文件映像对象和传递给CreateDIBSection函数的偏移量：   
+```c  
+HBITMAP CreateDIBsectionMappingFromFile (PTSTR szFileName)   
+{    
+	BITMAPFILEHEADER bmfh ;   
+	BITMAPINFO * pbmi ;    
+	BYTE * pBits ;   
+	BOOL bSuccess ;   
+	DWORD dwInfoSize, dwBytesRead ;   
+	HANDLE hFile, hFileMap ;   
+	HBITMAP hBitmap ;      
+	hFile = CreateFile (szFileName, GENERIC_READ | GENERIC_WRITE,    
+	0, // No sharing!   
+	NULL, OPEN_EXISTING, 0, NULL) ;   
+	if (hFile == INVALID_HANDLE_VALUE)   
+	return NULL ;    
+	bSuccess = ReadFile ( hFile, &bmfh, sizeof (BITMAPFILEHEADER),    
+	&dwBytesRead, NULL) ;     
+	if (!bSuccess || (dwBytesRead != sizeof (BITMAPFILEHEADER))
+	|| (bmfh.bfType != * (WORD *) "BM"))    
+	{   
+		CloseHandle (hFile) ;   
+		return NULL ;   
+	}    
+	dwInfoSize = bmfh.bfOffBits - sizeof (BITMAPFILEHEADER) ;   
+	pbmi = malloc (dwInfoSize) ;     
+	bSuccess = ReadFile (hFile, pbmi, dwInfoSize, &dwBytesRead, NULL) ;    
+	if (!bSuccess || (dwBytesRead != dwInfoSize))    
+	{   
+		free (pbmi) ;   
+		CloseHandle (hFile) ;   
+		return NULL ;   
+	}    
+	hFileMap = CreateFileMapping (hFile, NULL, PAGE_READWRITE, 0, 0, NULL) ;    
+	hBitmap = CreateDIBSection ( NULL, pbmi, DIB_RGB_COLORS, &pBits,hFileMap, bmfh.bfOffBits) ;   
+	free (pbmi) ;  
+	return hBitmap ;    
+}
+```   
+这个程序不会动。CreateDIBSection的文件指出「dwOffset [函数的最后一个参数]必须是DWORD大小的倍数」。尽管信息表头的大小始终是4的倍数并且色彩对照表的大小也始终是4的倍数，但位图文件表头却不是，它是14字节。因此bmfh.bfOffBits永远不会是4的倍数。   
 ### 总结
+如果是小型的DIB并且需要频繁地操作图素位，可以使用SetDIBitsToDevice和StretchDIBits来显示它们。然而，对于大型的DIB，此技术会遇到显示效能的问题，尤其在8位视讯显示器上和Windows NT环境下。    
+我们可以使用CreateDIBitmap和SetDIBits把DIB转化为DDB。现在，显示位图可以使用快速的BitBlt和StretchBlt函数来进行了。然而，我们不能直接存取这些与设备无关的图素位。    
+CreateDIBSection是一个很好的折衷方案。在Windows NT下通过BitBlt和StretchBlt使用位图句柄比使用SetDIBitsToDevice和StretchDIBits（但没有DDB的缺陷）会得到更好的效能。您仍然可以存取DIB图素位。    
