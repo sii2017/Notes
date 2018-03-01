@@ -1,3 +1,7 @@
+/*
+这个程序中涵盖了前几章的内容：打印、剪切、打开文件和保存文件以及打印文件的dlg
+另外他可以以四种不同的方式在窗口中显示DIB，代码中的体现比较简单。
+*/
 #include <windows.h>
 #include "dibfile.h"
 #include "resource.h"
