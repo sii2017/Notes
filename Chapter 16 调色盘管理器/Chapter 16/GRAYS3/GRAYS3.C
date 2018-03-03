@@ -1,5 +1,5 @@
 /*
-与GRAYS2相似
+与GRAYS2相似，使用了颜色的索引
 */
 #include <windows.h>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
