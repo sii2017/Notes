@@ -1,5 +1,5 @@
 /*
-用灰阶渐变色涂满整个显示窗口区域
+用灰阶渐变色涂满整个显示窗口区域，与GRAYS1相比GRAYS2使用了逻辑调色盘并加载进了系统调色盘
 */
 #include <windows.h>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
