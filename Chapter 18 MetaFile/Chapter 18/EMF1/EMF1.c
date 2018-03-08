@@ -1,7 +1,11 @@
+/*
+创建一个增强型metafile，然后画到显示界面上并置于中心
+*/
 #include <windows.h>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR szCmdLine, int iCmdShow)
 {
+	//正常创建，没有menu
 	static TCHAR szAppName[]= TEXT("EMF1");
 	HWND hwnd;
 	MSG msg;
@@ -49,7 +53,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam,LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
-		hdcEMF= CreateEnhMetaFile(NULL, NULL, NULL, NULL);
+		hdcEMF= CreateEnhMetaFile(NULL, NULL, NULL, NULL);//创建一个空的增强型metafile
+		//这里的数字并不是真实的坐标，各数值加上相同的数字，他们也不会有区别
 		Rectangle(hdcEMF, 100, 100, 200, 200);
 
 		MoveToEx(hdcEMF, 100, 100, NULL);
@@ -62,13 +67,13 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam,LPARAM lParam)
 		return 0;
 	case WM_PAINT:
 		hdc= BeginPaint(hwnd, &ps);
-		GetClientRect(hwnd, &rect);
-		rect.left= rect.right/4;
+		GetClientRect(hwnd, &rect);//获取显示区域大小
+		rect.left= rect.right/4;	//缩小rect
 		rect.right= 3*rect.right/4;
 		rect.top= rect.bottom/4;
 		rect.bottom= 3*rect.bottom/4;
 
-		PlayEnhMetaFile(hdc, hemf, &rect);
+		PlayEnhMetaFile(hdc, hemf, &rect);	//投射到rect上
 
 		EndPaint(hwnd, &ps);
 		return 0;

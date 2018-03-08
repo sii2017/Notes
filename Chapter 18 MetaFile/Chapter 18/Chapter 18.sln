@@ -5,6 +5,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MetaFile", "MetaFile\MetaFi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF1", "EMF1\EMF1.vcproj", "{10AB20A9-DCBC-405C-8387-880841A1587F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF2", "EMF2\EMF2.vcproj", "{C52623A4-B559-4D21-94FF-DC93561A78E2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF3", "EMF3\EMF3.vcproj", "{018A4E37-0F11-420C-9093-5E217CE4D16F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +23,14 @@ Global
 		{10AB20A9-DCBC-405C-8387-880841A1587F}.Debug|Win32.Build.0 = Debug|Win32
 		{10AB20A9-DCBC-405C-8387-880841A1587F}.Release|Win32.ActiveCfg = Release|Win32
 		{10AB20A9-DCBC-405C-8387-880841A1587F}.Release|Win32.Build.0 = Release|Win32
+		{C52623A4-B559-4D21-94FF-DC93561A78E2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C52623A4-B559-4D21-94FF-DC93561A78E2}.Debug|Win32.Build.0 = Debug|Win32
+		{C52623A4-B559-4D21-94FF-DC93561A78E2}.Release|Win32.ActiveCfg = Release|Win32
+		{C52623A4-B559-4D21-94FF-DC93561A78E2}.Release|Win32.Build.0 = Release|Win32
+		{018A4E37-0F11-420C-9093-5E217CE4D16F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{018A4E37-0F11-420C-9093-5E217CE4D16F}.Debug|Win32.Build.0 = Debug|Win32
+		{018A4E37-0F11-420C-9093-5E217CE4D16F}.Release|Win32.ActiveCfg = Release|Win32
+		{018A4E37-0F11-420C-9093-5E217CE4D16F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
