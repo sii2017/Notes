@@ -1,3 +1,6 @@
+/*
+本程序阐明了，metafile只会记录“会使用到设备内容句柄的GDI函数”并不会记录“不需要设备内容句柄的”函数
+*/
 #include <windows.h>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR szCmdLine, int iCmdShow)
@@ -51,14 +54,17 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam,LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
+		//将metafile创建在磁盘中,由于metafile属于图元文件，所以返回的是HDC类型的句柄
 		hdcEMF= CreateEnhMetaFile(NULL, TEXT("emf3.emf"), NULL, 
 			TEXT("EMF3\0EMF Demo #3\0"));
 
+		//CreateSolidBrush函数调用并不会被记录到metafile中但是selectobject函数会被记录进去
 		SelectObject(hdcEMF, CreateSolidBrush(RGB(0,0,255)));
 		lb.lbStyle= BS_SOLID;
 		lb.lbColor= RGB(255,0,0);
 		lb.lbHatch= 0;
 
+		//ExtCreatePen函数调用不会被记录到metafile中，但是selectobject函数会被记录进去
 		SelectObject(hdcEMF, ExtCreatePen(PS_SOLID|PS_GEOMETRIC, 5, &lb, 0, NULL));
 		
 		if(GetVersion()& 0x80000000)	//windows 98

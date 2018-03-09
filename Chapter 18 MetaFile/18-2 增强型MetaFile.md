@@ -63,14 +63,71 @@ GetEnhMetaFileHeader (hemf, cbSize, &emh) ;
 第一个参数是MetaFile句柄。最后一个参数是指向ENHMETAHEADER结构的指针。第二个参数是该结构的大小。可以使用类似的GetEnh-MetaFileDescription函数取得描述字符串。   
 ### MetaFile与GDI物件
 我们已经知道了GDI绘图命令储存在MetaFile中方式，现在看一下GDI对象的储存方式。程序EMF3除了建立用于绘制矩形和直线的非内定画笔和画刷以外，与前面介绍的EMF2程序很相似。该程序也对Rectangle坐标的问题提出了一点修改。EMF3程序使用GetVersion来确定执行环境是Windows 98还是Windows NT，并适当地调整参数。   
-参考EMF3
+参考EMF3   
+EMF3说明了：metafile只会记录“会使用到设备内容句柄的GDI函数”并不会记录“不需要设备内容句柄的”函数。  
+比如：  
+```c
+SelectObject(hdcEMF, CreateSolidBrush(RGB(0,0,255)));  
+```  
+CreateSolidBrush函数调用并不会被记录到metafile中但是selectobject函数会被记录进去。   
+总结一下，每当非内定的GDI对象首次被选入MetaFile设备内容时，GDI都会为该对象建立函数的记录编码。每个对象有一个依序从1开始的唯一数值，此数值由记录的第三个字段表示。跟在此记录后的是引用该数值的EMR_SELECTOBJECT记录。以后，将对象选入MetaFile设备内容时（在中间时期没有被删除），就只需要EMR_SELECTOBJECT记录了。
 ### MetaFile和位图
-参考EMF4
+现在，让我们做点稍微复杂的事，在MetaFile设备内容中绘制一幅位图，如程序18-5 EMF4所示。   
+参考EMF4   
+为了方便，EMF4加载由常数OEM_CLOSE指出的系统位图。在设备内容中显示位图的惯用方法是通过使用CreateCompatibleDC建立与目的设备内容（此例为MetaFile设备内容）兼容的内存设备内容。然后，通过使用SelectObject将位图选入该内存设备内容并且从该内存设备内容呼叫BitBlt或StretchBlt把位图画到目的设备内容。结束后，删除内存设备内容和位图。
 ### 列举MetaFile内容
-参考EMF5
-参考EMF6  
+**当希望存取MetaFile内的个别记录时**，可以使用称作MetaFile列举的程序。如程序18-6 EMF5所示。此程序使用MetaFile来显示与EMF3相同的图像，但它是通过MetaFile列举来进行的。  
+参考EMF5   
+EMF5使用EMF3程序建立的EMF3.EMF文件，所以确定在执行此程序前先执行EMF3程序。  
+在处理WM_PAINT时，两个程序的主要区别是EMF3呼叫PlayEnhMetaFile，而EMF5呼叫EnumEnhMetaFile。PlayEnhMetaFile函数有下面的语法：  
+```c
+PlayEnhMetaFile (hdc, hemf, &rect) ;   
+``` 
+第一个参数是要显示的MetaFile的设备内容句柄。第二个参数是增强型MetaFile句柄。第三个参数是指向描述设备内容平面上矩形的RECT结构的指针。MetaFile图像大小被缩放过，以便刚好能够显示在不超过该矩形的区域内。    
+EnumEnhMetaFile有5个参数，其中3个与PlayEnhMetaFile一样（虽然RECT结构的指针已经移到参数表的末尾）。   
+EnumEnhMetaFile的第三个参数是列举函数的名称，它用于呼叫EnhMetaFileProc。第四个参数是希望传递给列举函数的任意数据的指针，这里将该参数简单地设定为NULL。   
+列举函数。当调用EnumEnhMetaFile时，**对于MetaFile中的每一个记录，GDI都将调用EnhMetaFileProc一次（意味着将多次重复的调用）**，包括表头纪录和文件结束记录。通常列举函数传回TRUE，但它可能传回FALSE以略过剩下的列举程序。   
+**EMF5使用EnumEnhMetaFile和PlayEnhMetaFileRecord得到的结果与EMF3呼叫PlayEnhMetaFile得到的结果一样。区别在于EMF5现在直接介入了MetaFile的显示程序，并能够存取各个MetaFile记录。这是很有用的。**   
+列举函数(EnhMetaFileProc)的第一个参数是设备内容句柄。GDI从EnumEnhMetaFile的第一个参数中简单地取得此句柄。列举函数把该句柄传递给PlayEnhMetaFileRecord来标识图像显示的目的设备内容。   
+我们先跳到列举函数的第三个参数，它是指向ENHMETARECORD型态结构的指针，前面已经提到过。这个结构描述实际的MetaFile记录，就像它亲自在MetaFile中编码一样。    
+可以写一些程序代码来检查这些记录。如果不想把某些记录传送到PlayEnhMetaFileRecord函数。例如，在EMF5.C中，把下行插入到PlayEnhMetaFileRecord呼叫的前面：   
+```c
+if (pEmfRecord->iType != EMR_LINETO)   
+```  
+重新编译程序，执行它，将只看到矩形，而没有两条线。或使用下面的叙述：   
+```    
+if (pEmfRecord->iType != EMR_SELECTOBJECT)   
+```   
+这个小改变会让GDI用内定对象显示图像，而不是用MetaFile所建立的画笔和画刷。   
+可以像上面一样，阻止将metafile的内容传递给PlayEnhMetaFileRecord函数，但是程序中不应该直接的修改MetaFile记录。   
+以下看一下程序EMF6。   
+参考EMF6   
+与EMF5一样，EMF6使用EMF3程序建立的EMF3.EMFMetaFile，因此要在Visual C++中执行这个程序之前先执行过EMF3程序。  
+EMF5中有筛选的将metafile中的记录显示了出来，EMF6中更改了metafile中的记录。  
+但是在emf6中并不是更改原始记录，而是申请内存做了一个副本，先复制到副本，然后对副本进行操作。   
+在列举函数EnhMetaFileProc中的倒数第二个参数是nHandles，通常它是比MetaFile中简历的GDI对象还要大的值。它代表着GDI对象以及多余的一个是所列举的MetaFile句柄。当然它仅仅是一个数量。   
+而列举函数EnhMetaFileProc中的第二个参数是HANDLETABLE结构的指针，定义如下：   
+```c   
+typedef struct tagHANDLETABLE  
+{   
+	HGDIOBJ objectHandle [1] ;   
+}    
+HANDLETABLE ;   
+```   
+其中objectHandle数组中的元素等于nHandles的数量。   
+在EMF6中这个数量是3，代表着画笔、画刷和MetaFile句柄。而其中，每次呼叫列举函数时，数组的**第一个元素**都将包含所列举的MetaFile句柄。   
+在列举函数中，可以使用以下表达式取得这些GDI对象句柄：   
+```c
+pHandleTable->objectHandle[i]   
+```   
+**在第一次呼叫列举函数时**，表的第二、第三个元素将是0。它们是画笔和画刷句柄的保留位置。    
+以下是列举函数运作的方式：MetaFile中的第一个对象建立函数具有EMR_CREATEBRUSHINDIRECT的记录型态，此记录指出了对象编号1。当把该记录传递给PlayEnhMetaFileRecord时，GDI建立画刷并取得它的句柄。此句柄储存在objectHandle数组的元素1（第二个元素）中。当把第一个EMR_SELECTOBJECT记录传递给PlayEnhMetaFileRecord时，GDI发现此对象编号为1，并能够从表中找到该对象实际的句柄，而把它用来呼叫SelectObject。当MetaFile最后删除画刷时，GDI将objectHandle数组的元素1设定回0。   
+通过存取objectHandle数组，可以使用例如GetObjectType和GetObject等呼叫取得在MetaFile中使用的对象信息。   
 ### 嵌入图像
-参考EMF7
+列举MetaFile的最重要应用也许是在现有的MetaFile中嵌入其它图像（甚至是整个MetaFile）。事实上，现有的MetaFile保持不变；真正进行的是建立包含现有MetaFile和新嵌入图像的新MetaFile。基本的技巧是把MetaFile设备内容句柄传递给EnumEnhMetaFile，作为它的第一个参数。   
+在MetaFile命令序列的开头或结尾嵌入新图像是极简单的－就在EMR_HEADER记录之后或在EMF_EOF记录之前。然而，如果熟悉现有的MetaFile结构，就可以把新的绘图命令嵌入所需的任何地方。如程序EMF7所示。    
+参考EMF7   
+EMF7使用EMF3程序建立的EMF3.EMF，所以在执行EMF7之前要执行EMF3程序建立MetaFile。
 ### 增强型MetaFile阅览器和打印机
 参考EMFVIEW
 ### 显示精确的MetaFile图像
