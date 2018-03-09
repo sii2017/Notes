@@ -127,8 +127,18 @@ pHandleTable->objectHandle[i]
 列举MetaFile的最重要应用也许是在现有的MetaFile中嵌入其它图像（甚至是整个MetaFile）。事实上，现有的MetaFile保持不变；真正进行的是建立包含现有MetaFile和新嵌入图像的新MetaFile。基本的技巧是把MetaFile设备内容句柄传递给EnumEnhMetaFile，作为它的第一个参数。   
 在MetaFile命令序列的开头或结尾嵌入新图像是极简单的－就在EMR_HEADER记录之后或在EMF_EOF记录之前。然而，如果熟悉现有的MetaFile结构，就可以把新的绘图命令嵌入所需的任何地方。如程序EMF7所示。    
 参考EMF7   
-EMF7使用EMF3程序建立的EMF3.EMF，所以在执行EMF7之前要执行EMF3程序建立MetaFile。
+EMF7使用EMF3程序建立的EMF3.EMF，所以在执行EMF7之前要执行EMF3程序建立MetaFile。**将emf3的内容读取后，以列举的方式进行一定的修改并且存入emf7中，最后显示出来。（这是本程序最主要的新内容，以下为详解）**   
+首先，程序通过呼叫GetEnhMetaFile取得EMF3.EMF文件的MetaFile句柄，还呼叫GetEnhMetaFileHeader得到增强型MetaFile表头记录，目的是在后面的EnumEnhMetaFile调用中使用rclBounds字段。   
+> EnumEnhMetaFile的第三个参数是指向描述设备内容平面上矩形的RECT结构的指针。MetaFile图像大小被缩放过，以便刚好能够显示在不超过该矩形的区域内。   
+
+
+接下来，程序建立新的MetaFile文件EMF7.EMF。CreateEnhMetaFile函数传回设备内容句柄。然后，使用EMF7.EMF的MetaFile设备内容句柄和EMF3.EMF的MetaFile句柄调用EnumEnhMetaFile。   
+现在来看一看EnhMetaFileProc。如果被列举的记录不是表头纪录或文件结束记录，函数就呼叫PlayEnhMetaFileRecord把记录转换（画进去、复制进去）为新的MetaFile设备内容（并不是一定要排除表头纪录或文件结束记录，但它们会使MetaFile变大）。   
+而如果转换的记录是画矩形，则函数建立画笔用绿色的轮廓线和透明的内部来绘制椭圆。  
+回到WM_CREATE的最后，程序调用CloseEnhMetaFile取得新MetaFile的句柄。然后，它删除两个MetaFile句柄，而EMF3.EMF和EMF7.EMF文件留在了磁盘上。    
 ### 增强型MetaFile阅览器和打印机
+使用剪贴簿转换增强型MetaFile很简单，剪贴簿型态是CF_ENHMetaFile。GetClipboardData函数传回增强型MetaFile句柄，SetClipboardData也使用该MetaFile句柄。复制MetaFile时可以使用CopyEnhMetaFile函数。如果把增强型MetaFile放在剪贴簿中，Windows会让需要旧格式的那些程序也可以使用它。如果在剪贴簿中放置旧格式的MetaFile，Windows将也会自动视需要把内容转换为增强型MetaFile的格式。   
+程序EMFVIEW所示为在剪贴簿中传送MetaFile的程序代码，它也允许载入、储存和打印MetaFile。   
 参考EMFVIEW
 ### 显示精确的MetaFile图像
 参考EMF8

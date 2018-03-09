@@ -1,6 +1,6 @@
 /*
 EMF7使用EMF3程序建立的EMF3.EMF，所以在执行EMF7之前要执行EMF3程序建立MetaFile。
-
+将emf3的内容读取后，以列举的方式进行一定的修改并且存入emf7中，最后显示出来
 */
 #include <windows.h>
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -50,9 +50,10 @@ int CALLBACK EnhMetaFileProc(HDC hdc, HANDLETABLE* pHandleTable, CONST ENHMETARE
 	HBRUSH hBrush;
 	HPEN hPen;
 	LOGBRUSH lb;
-
+	//如果不是头或者尾，那么就按记录画进hdc（实际上是emf7里）
 	if(pEmfRecord->iType!= EMR_HEADER&& pEmfRecord->iType!= EMR_EOF)
 		PlayEnhMetaFileRecord(hdc, pHandleTable, pEmfRecord, iHandles);
+	//如果是方块则改变一些颜色及线条大小
 	if(pEmfRecord->iType== EMR_RECTANGLE)
 	{
 		hBrush= SelectObject(hdc, GetStockObject(NULL_BRUSH));
@@ -79,17 +80,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
-		//Retrieve existing MetaFile and header
+		//获取emf3的metafile句柄以及获取其表头
 		hemfOld= GetEnhMetaFile(TEXT("..\\emf3\\emf3.emf"));
 		GetEnhMetaFileHeader(hemfOld, sizeof(ENHMETAHEADER), &emh);
-		//Create a new MetaFile DC
+		//创建一个新的emf7
 		hdcEMF= CreateEnhMetaFile(NULL, TEXT("emf7.emf"), NULL, 
 			TEXT("EMF7\0EMF Demo #7\0"));
-		//Enumerate the existing MetaFile
+		//使用列举函数将emf3的内容画（拷贝）进emf7里
 		EnumEnhMetaFile(hdcEMF, hemfOld, EnhMetaFileProc, NULL, (RECT*)& emh.rclBounds);
-		//Clean up
+		//关闭打开的emf7的metafile句柄并且获得GDI句柄
 		hemf= CloseEnhMetaFile(hdcEMF);
-
+		//删除不需要的metafile句柄
 		DeleteEnhMetaFile(hemfOld);
 		DeleteEnhMetaFile(hemf);
 		return 0;
@@ -102,6 +103,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		rect.top= rect.bottom/4;
 		rect.bottom= 3*rect.bottom/4;
 
+		//获取emf7的句柄并且显示出来
 		hemf= GetEnhMetaFile(TEXT("emf7.emf"));
 		PlayEnhMetaFile(hdc, hemf, &rect);
 		DeleteEnhMetaFile(hemf);
