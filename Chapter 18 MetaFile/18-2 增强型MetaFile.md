@@ -139,9 +139,20 @@ EMF7使用EMF3程序建立的EMF3.EMF，所以在执行EMF7之前要执行EMF3�
 ### 增强型MetaFile阅览器和打印机
 使用剪贴簿转换增强型MetaFile很简单，剪贴簿型态是CF_ENHMetaFile。GetClipboardData函数传回增强型MetaFile句柄，SetClipboardData也使用该MetaFile句柄。复制MetaFile时可以使用CopyEnhMetaFile函数。如果把增强型MetaFile放在剪贴簿中，Windows会让需要旧格式的那些程序也可以使用它。如果在剪贴簿中放置旧格式的MetaFile，Windows将也会自动视需要把内容转换为增强型MetaFile的格式。   
 程序EMFVIEW所示为在剪贴簿中传送MetaFile的程序代码，它也允许载入、储存和打印MetaFile。   
-参考EMFVIEW
+**参考EMFVIEW**   
+EMFVIEW也支持完整的调色盘处理，以便支持**有调色盘编码信息的MetaFile**。（CreatePaletteFromMetaFile函数中处理调色盘）。该程序在处理WM_PAINT显示MetaFile以及处理WM_QUERYNEWPALETTE和WM_PALETTECHANGED消息时，调用这个函数。   
+在响应菜单中的「Print」命令时，EMFVIEW显示普通的打印机对话框，然后取得页面中可打印区域的大小。MetaFile被缩放成适当尺寸以填入整个区域。EMFVIEW在窗口中以类似方式显示MetaFile。   
+「File」菜单中的「Properties」项使EMFVIEW显示包含MetaFile表头信息的消息框。    
 ### 显示精确的MetaFile图像
-参考EMF8
+MetaFile图像的好处在于它能够以任意大小缩放并且仍能保持一定的逼真度。   
+> MetaFile图像中包含的信息是“绘图操作”，增大缩小图像无非只是更改绘图操作的坐标，使之更长或更短，并不会影响图片的质量。但是位图则不行，位图中包含的信息是图素，放大缩小图像则是野蛮的复制或者缩减图素，这将会影响到图像的质量。    
+
+当然，MetaFile的压缩并不是完美无缺的。**我们所使用的图形输出设备的图素大小是有限的**。当MetaFile图像压缩到一定大小时，组成MetaFile的大量线条会变成模糊的斑点，同时区域填入图案和混色看起来也很奇怪。如果MetaFile中包含嵌入的位图或旧的点阵字体，同样会引起类似的问题。   
+尽管如此，大多数情况下MetaFile可以任意地缩放。但是在某种逻辑需求下，我们应该保持图像的纵横比一致（如含有文字的矩形，如将MetaFile变宽或者变高会使签名变形）。   
+正确地显示MetaFile图像（以特定的度量单位或用适当的纵横比），**需要使用MetaFile表头中的大小信息并根据此信息设定矩形结构**。   
+在本章剩下的范例程序中将使用名为EMF.C的程序架构，它包括打印处理的程序代码、资源描述档EMF.RC和表头文件RESOURCE.H。    
+EMF8.C程序使用这些文件显示一把6英寸的直尺。   
+参考EMF8   
 参考EMF9
 ### 缩放比例和纵横比
 参考EMF10

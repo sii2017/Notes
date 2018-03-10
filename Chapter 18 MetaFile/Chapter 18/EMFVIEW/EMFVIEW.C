@@ -57,7 +57,7 @@ HPALETTE CreatePaletteFromMetaFile(HENHMETAFILE hemf)
 
 	if(!hemf)
 		return NULL;
-	if(0== (iNum= GetEnhMetaFilePaletteEntries(hemf, 0, NULL)))
+	if(0== (iNum= GetEnhMetaFilePaletteEntries(hemf, 0, NULL)))	//如果有调色盘编码，那么就获取调色盘，没有就返回NULL
 		return NULL;
 	plp= malloc(sizeof(LOGPALETTE)+(iNum-1)*sizeof(PALETTEENTRY));//LOGPALETTE中包含一个PALETTEENTR，所以申请的PALETTEENTRY中为iNum-1个
 	plp->palVersion= 0x0300;//支持windows NT 3.0

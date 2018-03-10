@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF7", "EMF7\EMF7.vcproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMFVIEW", "EMFVIEW\EMFVIEW.vcproj", "{6903554C-A23D-4341-A5B5-222FC162A02C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF8", "EMF8\EMF8.vcproj", "{128F46C9-F215-48D1-98E5-70FC1B29A633}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,10 @@ Global
 		{6903554C-A23D-4341-A5B5-222FC162A02C}.Debug|Win32.Build.0 = Debug|Win32
 		{6903554C-A23D-4341-A5B5-222FC162A02C}.Release|Win32.ActiveCfg = Release|Win32
 		{6903554C-A23D-4341-A5B5-222FC162A02C}.Release|Win32.Build.0 = Release|Win32
+		{128F46C9-F215-48D1-98E5-70FC1B29A633}.Debug|Win32.ActiveCfg = Debug|Win32
+		{128F46C9-F215-48D1-98E5-70FC1B29A633}.Debug|Win32.Build.0 = Debug|Win32
+		{128F46C9-F215-48D1-98E5-70FC1B29A633}.Release|Win32.ActiveCfg = Release|Win32
+		{128F46C9-F215-48D1-98E5-70FC1B29A633}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
