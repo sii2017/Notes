@@ -1,3 +1,6 @@
+/*
+使用到了上几章中的调色盘
+*/
 #include <windows.h>
 #include <commdlg.h>
 #include "resource.h"
@@ -45,6 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR szCmdLine, 
 	return msg.wParam;
 }
 
+//从metafile中获取信息建立逻辑调色盘
 HPALETTE CreatePaletteFromMetaFile(HENHMETAFILE hemf)
 {
 	HPALETTE hPalette;
@@ -55,8 +59,8 @@ HPALETTE CreatePaletteFromMetaFile(HENHMETAFILE hemf)
 		return NULL;
 	if(0== (iNum= GetEnhMetaFilePaletteEntries(hemf, 0, NULL)))
 		return NULL;
-	plp= malloc(sizeof(LOGPALETTE)+(iNum-1)*sizeof(PALETTEENTRY));
-	plp->palVersion= 0x0300;
+	plp= malloc(sizeof(LOGPALETTE)+(iNum-1)*sizeof(PALETTEENTRY));//LOGPALETTE中包含一个PALETTEENTR，所以申请的PALETTEENTRY中为iNum-1个
+	plp->palVersion= 0x0300;//支持windows NT 3.0
 	plp->palNumEntries= iNum;
 
 	GetEnhMetaFilePaletteEntries(hemf, iNum, plp->palPalEntry);
@@ -125,7 +129,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
 		{
-		case IDM_FILE_OPEN:
+		case IDM_FILE_OPEN:	//打开文件窗口，与之前相同
 			//Show the file Open dialog box
 			ofn.Flags= 0;
 			if(!GetOpenFileName(&ofn))
@@ -150,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					MB_ICONEXCLAMATION| MB_OK);
 			}
 			return 0;
-		case IDM_FILE_SAVE_AS:
+		case IDM_FILE_SAVE_AS://保存文件
 			if(!hemf)
 				return 0;
 			//Show the file save dialog box
@@ -173,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				MessageBox(hwnd, TEXT("Cannot save MetaFile"), szAppName, 
 				MB_ICONEXCLAMATION| MB_OK);
 			return 0;
-		case IDM_FILE_PRINT:
+		case IDM_FILE_PRINT://打印，与之前类似，StartDoc和EndDoc之间由之前的基础GDI函数换成了metafile专用的PlayEnhMetaFile
 			//Show the print dialog box and get printer DC
 			printdlg.Flags= PD_RETURNDC| PD_NOPAGENUMS| PD_NOSELECTION;
 			if(!PrintDlg(&printdlg))
@@ -210,7 +214,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				MessageBox(hwnd, TEXT("Could not print MetaFile"), szAppName, 
 				MB_ICONEXCLAMATION| MB_OK);
 			return 0;
-		case IDM_FILE_PROPERTIES:
+		case IDM_FILE_PROPERTIES://获取信息并且写入缓冲pBuffer中再以message展示
 			if(!hemf)
 				return 0;
 			iLength= GetEnhMetaFileDescription(hemf, 0, NULL);
@@ -249,12 +253,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				return 0;
 			//Transfer MetaFile copy to the clipboard
 			hemfCopy= CopyEnhMetaFile(hemf, NULL);
-			OpenClipboard(hwnd);
-			EmptyClipboard();
-			SetClipboardData(CF_ENHMETAFILE, hemfCopy);
-			CloseClipboard();
+			OpenClipboard(hwnd);//打开剪贴簿
+			EmptyClipboard();	//清空剪贴簿
+			SetClipboardData(CF_ENHMETAFILE, hemfCopy);//放入剪贴簿
+			CloseClipboard();	//关闭剪贴簿
 
-			if(LOWORD(wParam)== IDM_EDIT_COPY)
+			if(LOWORD(wParam)== IDM_EDIT_COPY)	//如果是复制则结束，如果是剪贴则继续下面的命令删除原来的内容
 				return 0;
 			//fall through if IDM_EDIT_CUT
 		case IDM_EDIT_DELETE:
@@ -265,7 +269,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				InvalidateRect(hwnd, NULL, TRUE);
 			}
 			return 0;
-		case IDM_EDIT_PASTE:
+		case IDM_EDIT_PASTE://从剪贴簿里活动内容
 			OpenClipboard(hwnd);
 			hemfCopy= GetClipboardData(CF_ENHMETAFILE);
 			CloseClipboard();
@@ -274,9 +278,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DeleteEnhMetaFile(hemf);
 				hemf= NULL;
 			}
-			hemf= CopyEnhMetaFile(hemfCopy, NULL);
+			hemf= CopyEnhMetaFile(hemfCopy, NULL);	//将获取的内容放入hemf中，供WM_PAINT中绘制
 			
-			InvalidateRect(hwnd, NULL, TRUE);
+			InvalidateRect(hwnd, NULL, TRUE);	//令区域无效
 			return 0;
 		case IDM_APP_ABOUT:
 			MessageBox(hwnd, TEXT("Enhanced MetaFile Viewer\n")
@@ -291,9 +295,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc= BeginPaint(hwnd, &ps);
 		if(hemf)
 		{
-			if(hPalette= CreatePaletteFromMetaFile(hemf))
+			if(hPalette= CreatePaletteFromMetaFile(hemf))//从位图中获得调色板
 			{
-				SelectPalette(hdc, hPalette, FALSE);
+				SelectPalette(hdc, hPalette, FALSE);//更换调色板
 			}
 			GetClientRect(hwnd, &rect);
 			PlayEnhMetaFile(hdc, hemf, &rect);
@@ -303,7 +307,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		EndPaint(hwnd, &ps);
 		return 0;
-	case WM_QUERYNEWPALETTE:
+	case WM_QUERYNEWPALETTE://当顶层窗口或它的子窗口具有输入焦点时收到该消息
 		if(!hemf|| !(hPalette= CreatePaletteFromMetaFile(hemf)))
 			return FALSE;
 		hdc= GetDC(hwnd);
@@ -314,7 +318,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DeleteObject(hPalette);
 		ReleaseDC(hwnd, hdc);
 		return TRUE;
-	case WM_PALETTECHANGED:
+	case WM_PALETTECHANGED://当调色板更改后收到的消息
 		if((HWND)wParam== hwnd)
 			break;
 		if(!hemf||!(hPalette= CreatePaletteFromMetaFile(hemf)))
