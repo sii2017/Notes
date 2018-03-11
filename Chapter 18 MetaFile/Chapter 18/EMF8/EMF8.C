@@ -1,3 +1,7 @@
+/*
+EMF1-7中显示的metafile图像都可以由拉伸显示窗口的大小来任意改变长宽比，但是从MEF8开始其中显示的直尺的大小及长宽高是不随窗口的改变而改变的。
+EMF1-7中的WinMain是在EMFx.c中的，之后将会统一放在EMF.C中，而EFMx.c中则是用来放一些特定的不同的代码。
+*/
 #include <windows.h>
 TCHAR szClass[]= TEXT("EMF8");
 TCHAR szTitle[]= TEXT("EMF8:Enhanced MetaFile Demo #8");
@@ -49,12 +53,14 @@ void DrawRuler(HDC hdc, int cx, int cy)
 	DeleteObject(SelectObject(hdc, GetStockObject(BLACK_PEN)));
 }
 
+//WM_CREATE
 void CreateRoutine(HWND hwnd)
 {
 	HDC hdcEMF;
 	HENHMETAFILE hemf;
 	int cxMms, cyMms, cxPix, cyPix, xDpi, yDpi;
-	
+
+	//创建MetaFile文件在磁盘上
 	hdcEMF= CreateEnhMetaFile(NULL, TEXT("emf8.emf"), NULL, TEXT("EMF8\0EMF Demo #8\0"));
 	if(hdcEMF== NULL)
 		return;
@@ -66,8 +72,9 @@ void CreateRoutine(HWND hwnd)
 	xDpi= cxPix* 254/ cxMms/ 10;
 	yDpi= cyPix* 254/ cyMms/ 10;
 
+	//在MetaFile中画一把直尺
 	DrawRuler(hdcEMF, 6*xDpi, yDpi);
-	hemf= CloseEnhMetaFile(hdcEMF);
+	hemf= CloseEnhMetaFile(hdcEMF);	//关闭指定的增强型图元文件设备场景，并将新建的图元文件返回一个句柄
 
 	DeleteEnhMetaFile(hemf);
 }

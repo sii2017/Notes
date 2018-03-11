@@ -1,3 +1,6 @@
+/*
+原来处于EMFx.c的WinMain函数已经窗口消息处理程序，由EMF8开始转移到EMF.C文件中。
+*/
 #include <windows.h>
 #include <commdlg.h>
 #include "..\\emf8\\resource.h"
@@ -50,6 +53,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR szCmdLine, 
 	return msg.wParam;
 }
 
+//包含打印程序的函数
 BOOL PrintRoutine(HWND hwnd)
 {
 	static DOCINFO di;
@@ -98,7 +102,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
-		CreateRoutine(hwnd);
+		CreateRoutine(hwnd);//创建metafile图元文件emf8并保存在磁盘上。
 		return 0;
 	case WM_COMMAND:
 		switch(wParam)
@@ -106,7 +110,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_PRINT:
 			SetCursor(LoadCursor(NULL, IDC_WAIT));
 			ShowCursor(TRUE);
-			bSuccess= PrintRoutine(hwnd);
+			bSuccess= PrintRoutine(hwnd);//这里是打印在哪里呀
 
 			ShowCursor(FALSE);
 			SetCursor(LoadCursor(NULL, IDC_ARROW));

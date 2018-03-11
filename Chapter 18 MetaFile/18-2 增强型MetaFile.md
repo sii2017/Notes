@@ -1,4 +1,4 @@
-## 增强型MetaFile
+## 增强型MetaFile（增强型图元文件）
 「增强型MetaFile」格式是在32位Windows版本中发表的。它包含一组新的函数呼叫、一对新的数据结构、新的剪贴簿格式和新的文件扩展名.EMF。  
 这种新的MetaFile格式最重要的改进是**加入可通过函数呼叫取得的更丰富的表头信息**，这种表头信息可用来帮助应用程序显示MetaFile图像。  
 有些增强型MetaFile函数使您能够在增强型MetaFile(EMF)格式和老式MetaFile格式（也称作Windows MetaFile(WMF)格式）之间来回转换。当然，这种转换很可能遇到麻烦，因为老式MetaFile格式并不支持某些，例如GDI绘图路径等，新的32位图形功能。
@@ -19,7 +19,9 @@ hdcEMF= CreateEnhMetaFile(NULL, TEXT("emf2.emf"), NULL,
 第二个参数是文件名称。如果该参数为NULL（在EMF1中为NULL，但在EMF2中不为NULL），则该函数建立内存MetaFile。EMF2建立名为EMF2.EMF的MetaFile文件。   
 函数的第三个参数是RECT结构的地址，它指出了以0.01mm为单位的MetaFile的总大小。这是MetaFile表头数据中极其重要的信息（这是早期的Windows MetaFile格式的缺陷之一）。**如果该参数为NULL，GDI会计算出尺寸。当应用程序对性能要求比较严格时，就需要使用该参数以避免让GDI处理太多东西**。   
 最后的参数是描述该MetaFile的字符串。该字符串分为两部分：第一部分是以NULL字符结尾的应用程序名称（不一定是程序的文件名称），第二部分是描述视觉图像内容的说明，以两个NULL字符结尾。例如用C中的符号「\0」作为NULL字符。由于在C中通常会在使用的字符串末尾放入一个NULL字符，所以如EMF2所示，在末尾仅需一个「\0」。   
-由于不在内存中没有句柄可以使用，则通过函数GetEnhMetaFile存取这个文件。   
+> 由于不在内存中没有句柄可以使用，则通过函数GetEnhMetaFile**根据文件名**存取这个文件。   
+> 注：CreateEnhMetaFile函数的返回值是HDC类型的设备内容句柄，如果需要绘图，则是通过该句柄来进行一些操作。   
+
 增强型MetaFile由可变长度的记录组成，这些记录的一般格式由ENHMETARECORD结构说明，它在WINGDI.H表头文件中定义如下：   
 ```c
 typedef struct tagENHMETARECORD   
