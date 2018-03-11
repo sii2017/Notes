@@ -6,6 +6,7 @@ EMF1-7中的WinMain是在EMFx.c中的，之后将会统一放在EMF.C中，而EFMx.c中则是用来放一
 TCHAR szClass[]= TEXT("EMF8");
 TCHAR szTitle[]= TEXT("EMF8:Enhanced MetaFile Demo #8");
 
+//WM_CREATE
 void DrawRuler(HDC hdc, int cx, int cy)
 {
 	int iAdj, i, iHeight;
@@ -88,14 +89,16 @@ void PaintRoutine(HWND hwnd, HDC hdc, int cxArea, int cyArea)
 
 	hemf= GetEnhMetaFile(TEXT("emf8.emf"));
 	GetEnhMetaFileHeader(hemf, sizeof(emh), &emh);
+	//rclBounds以图素为单位给出图像的大小。由于他之前依据的是显示器大小，所以它是不变的。
 	cxImage= emh.rclBounds.right- emh.rclBounds.left;
 	cyImage= emh.rclBounds.bottom- emh.rclBounds.top;
 
+	//由于这四个坐标依托与rclBounds是固定的，所以当我们拖动显示窗口，直尺不会随之变大变小。
 	rect.left= (cxArea- cxImage)/2;
 	rect.right= (cxArea+ cxImage)/2;
 	rect.top= (cyArea- cyImage)/2;
 	rect.bottom= (cyArea+ cyImage)/2;
 
-	PlayEnhMetaFile(hdc, hemf, &rect);
+	PlayEnhMetaFile(hdc, hemf, &rect);	//将metafile打印出来
 	DeleteEnhMetaFile(hemf);
 }
