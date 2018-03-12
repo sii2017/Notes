@@ -27,6 +27,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF10", "EMF10\EMF10.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF11", "EMF11\EMF11.vcproj", "{4B8C01F5-BCF0-41C2-A724-BD7411A2E89A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF12", "EMF12\EMF12.vcproj", "{B9862D57-5F8B-42DC-96CB-2995A968DCC9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EMF13", "EMF13\EMF13.vcproj", "{7D894DFB-9CAC-414B-A15F-E15F17CE5861}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -85,6 +89,14 @@ Global
 		{4B8C01F5-BCF0-41C2-A724-BD7411A2E89A}.Debug|Win32.Build.0 = Debug|Win32
 		{4B8C01F5-BCF0-41C2-A724-BD7411A2E89A}.Release|Win32.ActiveCfg = Release|Win32
 		{4B8C01F5-BCF0-41C2-A724-BD7411A2E89A}.Release|Win32.Build.0 = Release|Win32
+		{B9862D57-5F8B-42DC-96CB-2995A968DCC9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B9862D57-5F8B-42DC-96CB-2995A968DCC9}.Debug|Win32.Build.0 = Debug|Win32
+		{B9862D57-5F8B-42DC-96CB-2995A968DCC9}.Release|Win32.ActiveCfg = Release|Win32
+		{B9862D57-5F8B-42DC-96CB-2995A968DCC9}.Release|Win32.Build.0 = Release|Win32
+		{7D894DFB-9CAC-414B-A15F-E15F17CE5861}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D894DFB-9CAC-414B-A15F-E15F17CE5861}.Debug|Win32.Build.0 = Debug|Win32
+		{7D894DFB-9CAC-414B-A15F-E15F17CE5861}.Release|Win32.ActiveCfg = Release|Win32
+		{7D894DFB-9CAC-414B-A15F-E15F17CE5861}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
