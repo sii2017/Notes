@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MDIDEMO", "MDIDEMO\MDIDEMO.vcproj", "{5122F88A-39AE-4F4B-B73E-8DA2034E1651}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5122F88A-39AE-4F4B-B73E-8DA2034E1651}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5122F88A-39AE-4F4B-B73E-8DA2034E1651}.Debug|Win32.Build.0 = Debug|Win32
+		{5122F88A-39AE-4F4B-B73E-8DA2034E1651}.Release|Win32.ActiveCfg = Release|Win32
+		{5122F88A-39AE-4F4B-B73E-8DA2034E1651}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
