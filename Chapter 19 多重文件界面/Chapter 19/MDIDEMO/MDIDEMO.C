@@ -5,7 +5,7 @@
 #define HELLO_MENU_POS 2
 #define RECT_MENU_POS 1 
 
-#define DIM_FIRSTCHILD 50000
+#define IDM_FIRSTCHILD 50000
 
 LRESULT CALLBACK FrameWndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK CloseEnumProc(HWND, LPARAM);
@@ -36,9 +36,9 @@ TCHAR szRectClass[]= TEXT("MdiRectChild");
 
 HINSTANCE hInst;
 HMENU hMenuInit, hMenuHello, hMenuRect;
-HEMNU hMenuInitWindow, hMenuHelloWindow, hMenuRectWindow;
+HMENU hMenuInitWindow, hMenuHelloWindow, hMenuRectWindow;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, szCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,PSTR szCmdLine, int iCmdShow)
 {
 	HACCEL hAccel;
 	HWND hwndFrame, hwndClient;
@@ -108,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, szCmdLine, int 
 		WS_OVERLAPPEDWINDOW| WS_CLIPCHILDREN, 
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		NULL, hMenuInit, hInstance, NULL);
-	hwndClinet= GetWindow(hwndFrame, GW_CHILD);
+	hwndClient= GetWindow(hwndFrame, GW_CHILD);
 	ShowWindow(hwndFrame, iCmdShow);
 	UpdateWindow(hwndFrame);
 
@@ -159,7 +159,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			mdicreate.cx= CW_USEDEFAULT;
 			mdicreate.cy= CW_USEDEFAULT;
 			mdicreate.style= 0;
-			midcreate.lParam= 0;
+			mdicreate.lParam= 0;
 			hwndChild= (HWND)SendMessage(hwndClient, WM_MDICREATE, 0,
 				(LPARAM)(LPMDICREATESTRUCT)&mdicreate);
 			return 0;
@@ -172,7 +172,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			mdicreate.cy= CW_USEDEFAULT;
 			mdicreate.cy= CW_USEDEFAULT;
 			mdicreate.style= 0;
-			mdicreate.lParam 0;
+			mdicreate.lParam= 0;
 
 			hwndChild= (HWND)SendMessage(hwndClient, WM_MDICREATE, 0, 
 				(LPARAM)(LPMDICREATESTRUCT)&mdicreate);
@@ -186,7 +186,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			SendMessage(hwnd, WM_CLOSE, 0,0 );
 			return 0;
 			//messages for arranging windows
-		case IDM_WINDOW_FILE:
+		case IDM_WINDOW_TILE:
 			SendMessage(hwndClient, WM_MDITILE, 0,0);
 			return 0;
 		case IDM_WINDOW_CASCADE:
@@ -207,7 +207,7 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 	case WM_QUERYENDSESSION:
 	case WM_CLOSE:	//Attempt to close all children
-		SendMessage(hwnd, WM_COMMAND, IDM_WINDOW_CLOASEALL, 0);
+		SendMessage(hwnd, WM_COMMAND, IDM_WINDOW_CLOSEALL, 0);
 
 		if(NULL!= GetWindow(hwndClient,  GW_CHILD))
 			return 0;
@@ -219,12 +219,12 @@ LRESULT CALLBACK FrameWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	return DefFrameProc(hwnd, hwndClient, message, wParam, lParam);
 }
 
-BOOL CALLBACK ClosseEnumProc(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK CloseEnumProc(HWND hwnd, LPARAM lParam)
 {
 	if(GetWindow(hwnd, GW_OWNER))	//Check for icon title
 		return TRUE;
 	SendMessage(GetParent(hwnd), WM_MDIRESTORE, (WPARAM)hwnd, 0);
-	if(!SendMessage(hwnd, MW_QUERYENDSESSION, 0, 0))
+	if(!SendMessage(hwnd, WM_QUERYENDSESSION, 0, 0))
 		return TRUE;
 	SendMessage(GetParent(hwnd), WM_MDIDESTROY, (WPARAM)hwnd, 0);
 	return TRUE;
@@ -233,7 +233,7 @@ BOOL CALLBACK ClosseEnumProc(HWND hwnd, LPARAM lParam)
 LRESULT CALLBACK HelloWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static COLORREF clrTextArray[]= {
-		RGB(0,0,0), RGB(255,0,0), RGB(0,255,0) RGB(0,0,255), RGB(255,255,255)
+		RGB(0,0,0), RGB(255,0,0), RGB(0,255,0), RGB(0,0,255), RGB(255,255,255)
 	};
 	static HWND hwndClient, hwndFrame;
 	HDC hdc;
@@ -246,7 +246,7 @@ LRESULT CALLBACK HelloWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	{
 	case WM_CREATE:
 		//Allocate memory for window private data
-		pHelloData= (PHELLODATA)HeapAlloc(GetProessHeap(), HEAP_ZERO_MEMORY, 
+		pHelloData= (PHELLODATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 
 			sizeof(HELLODATA));
 		pHelloData->iColor= IDM_COLOR_BLACK;
 		pHelloData->clrText= RGB(0,0,0);
@@ -295,8 +295,8 @@ LRESULT CALLBACK HelloWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			SendMessage(hwndClient, WM_MDISETMENU, (WPARAM)hMenuHello, 
 			(LPARAM)hMenuHelloWindow);
 		//Check or uncheck menu item
-		pHelloData= (PHELLODATA)GetWindowLONG(HWND, 0);
-		CheckMenuItem(hMenuHelo, pHelloData->iColor, 
+		pHelloData= (PHELLODATA)GetWindowLong(hwnd, 0);
+		CheckMenuItem(hMenuHello, pHelloData->iColor, 
 			(lParam== (LPARAM)hwnd)? MF_CHECKED: MF_UNCHECKED);
 		//Set the Init menu if losing focus 
 		if(lParam!= (LPARAM)hwnd)
@@ -328,3 +328,65 @@ LRESULT CALLBACK RectWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 	PAINTSTRUCT ps;
 	int xLeft, xRight, yTop, yBottom;
 	short nRed, nGreen, nBlue;
+
+	switch(message)
+	{
+	case WM_CREATE:
+		//Allocate memory for window private data
+		pRectData= (PRECTDATA)HeapAlloc(GetProcessHeap(), 
+			HEAP_ZERO_MEMORY, sizeof(RECTDATA));
+		SetWindowLong(hwnd, 0, (long)pRectData);
+		//Start the timer going
+		SetTimer(hwnd, 1, 250, NULL);
+		//Save some window handles
+		hwndClient= GetParent(hwnd);
+		hwndFrame= GetParent(hwndClient);
+		return 0;
+	case WM_SIZE:
+		//if not minimized, save the window size
+		if(wParam!= SIZE_MINIMIZED)
+		{
+			pRectData= (PRECTDATA)GetWindowLong(hwnd, 0);
+			pRectData->cxClient= LOWORD(lParam);
+			pRectData->cyClient= HIWORD(lParam);
+		}
+		break;
+	case WM_TIMER:
+		//Display a random rectangle
+		pRectData= (PRECTDATA)GetWindowLong(hwnd, 0);
+		xLeft= rand()%pRectData->cxClient;
+		xRight= rand()%pRectData->cxClient;
+		yTop= rand()%pRectData->cyClient;
+		yBottom= rand()%pRectData->cyClient;
+		nRed= rand()&255;
+		nGreen= rand()&255;
+		nBlue= rand()&255;
+
+		hdc= GetDC(hwnd);
+		hBrush= CreateSolidBrush(RGB(nRed, nGreen, nBlue));
+		SelectObject(hdc, hBrush);
+		Rectangle(hdc, min(xLeft, xRight), min(yTop, yBottom), 
+			max(xLeft, xRight), max(yTop, yBottom));
+		ReleaseDC(hwnd, hdc);
+		DeleteObject(hBrush);
+		return 0;
+	case WM_PAINT:	//Clear the window
+		InvalidateRect(hwnd, NULL, TRUE);
+		hdc= BeginPaint(hwnd, &ps);
+		EndPaint(hwnd, &ps);
+		return 0;
+	case WM_MDIACTIVATE:	//Set the appropriate menu
+		if(lParam== (LPARAM)hwnd)
+			SendMessage(hwndClient, WM_MDISETMENU, (WPARAM)hMenuRect, (LPARAM)hMenuRectWindow);
+		else
+			SendMessage(hwndClient, WM_MDISETMENU, (WPARAM)hMenuInit, (LPARAM)hMenuInitWindow);
+		DrawMenuBar(hwndFrame);
+		return 0;
+	case WM_DESTROY:
+		pRectData= (PRECTDATA)GetWindowLong(hwnd, 0);
+		HeapFree(GetProcessHeap(), 0, pRectData);
+		KillTimer(hwnd, 1);
+		return 0;
+	}
+	return DefMDIChildProc(hwnd, message, wParam, lParam);
+}
