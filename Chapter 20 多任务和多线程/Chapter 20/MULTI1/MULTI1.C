@@ -1,3 +1,7 @@
+/*
+主窗口创建四个子窗口，并且做一个定时器分别发送给四个子窗口更新内容
+关于为何使用APIENTRY代替CALLBACK意义不明，就代码上来分析两者效果是一样的，并且替换后也可以正常运行。
+*/
 #include <windows.h>
 #include <math.h>
 
@@ -201,6 +205,7 @@ LRESULT APIENTRY WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				wndclass.hbrBackground= (HBRUSH)GetStockObject(WHITE_BRUSH);
 				wndclass.lpszMenuName= NULL;
 
+				//按顺序创建四个相同的窗口
 				for(i=0; i<4; i++)
 				{
 					wndclass.lpfnWndProc= ChildProc[i];
@@ -219,6 +224,7 @@ LRESULT APIENTRY WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				cxClient= LOWORD(lParam);
 				cyClient= HIWORD(lParam);
 
+				//分别移动到四个位置
 				for(i=0; i<4; i++)
 					MoveWindow(hwndChild[i], (i%2)*cxClient/2, (i>1)*cyClient/2, cxClient/2, cyClient/2, TRUE);
 				return 0;

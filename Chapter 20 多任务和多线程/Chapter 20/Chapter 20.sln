@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RNDRCTMT", "RNDRCTMT\RNDRCT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MULTI1", "MULTI1\MULTI1.vcproj", "{0D925ECC-08E6-44AD-82C1-C03F89A15E2D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MULTI2", "MULTI2\MULTI2.vcproj", "{89F13D5F-34ED-486B-B017-C540867CB0E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{0D925ECC-08E6-44AD-82C1-C03F89A15E2D}.Debug|Win32.Build.0 = Debug|Win32
 		{0D925ECC-08E6-44AD-82C1-C03F89A15E2D}.Release|Win32.ActiveCfg = Release|Win32
 		{0D925ECC-08E6-44AD-82C1-C03F89A15E2D}.Release|Win32.Build.0 = Release|Win32
+		{89F13D5F-34ED-486B-B017-C540867CB0E3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{89F13D5F-34ED-486B-B017-C540867CB0E3}.Debug|Win32.Build.0 = Debug|Win32
+		{89F13D5F-34ED-486B-B017-C540867CB0E3}.Release|Win32.ActiveCfg = Release|Win32
+		{89F13D5F-34ED-486B-B017-C540867CB0E3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
