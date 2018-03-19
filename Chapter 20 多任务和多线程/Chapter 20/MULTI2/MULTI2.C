@@ -1,3 +1,6 @@
+/*
+这是MULTI1的改良版，改进成了多线程来使用
+*/
 #include <windows.h>
 #include <math.h>
 #include <process.h>
@@ -51,6 +54,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	return msg.wParam;
 }
 
+//查看是否写到底了，如果到底则刷新页面重新写
 int CheckBottom(HWND hwnd, int cyClient, int cyChar, int iLine)
 {
 	if(iLine*cyChar+ cyChar>cyClient)
@@ -66,7 +70,7 @@ int CheckBottom(HWND hwnd, int cyClient, int cyChar, int iLine)
 void Thread1(PVOID pvoid)
 {
 	HDC hdc;
-	int iNum= 0;, iLine=0;
+	int iNum= 0, iLine=0;
 	PPARAMS pparams;
 	TCHAR szBuffer[16];
 
@@ -83,10 +87,10 @@ void Thread1(PVOID pvoid)
 		ReleaseDC(pparams->hwnd, hdc);
 		iLine++;
 	}
-	_endTread();
+	_endthread();	//结束进程2 
 }
 
-LRESULT APIENTRY WndPorc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT APIENTRY WndProc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static PARAMS params;
 	switch(message)
@@ -94,7 +98,7 @@ LRESULT APIENTRY WndPorc1(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		params.hwnd= hwnd;
 		params.cyChar= HIWORD(GetDialogBaseUnits());
-		_beginthread(Thread1, 0, &params);
+		_beginthread(Thread1, 0, &params);	//创建进程1
 		return 0;
 	case WM_SIZE:
 		params.cyClient= HIWORD(lParam);
@@ -138,7 +142,7 @@ void Thread2(PVOID pvoid)
 		ReleaseDC(pparams->hwnd, hdc);
 		iLine++;
 	}
-	_endthread();
+	_endthread();	//结束进程2
 }
 
 LRESULT APIENTRY WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -150,7 +154,7 @@ LRESULT APIENTRY WndProc2(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		params.hwnd= hwnd;
 		params.cyChar= HIWORD(GetDialogBaseUnits());
-		_beginthread(Thread2, 0, &params);
+		_beginthread(Thread2, 0, &params);//创建进程2
 		return 0;
 	case WM_SIZE:
 		params.cyClient= HIWORD(lParam);
@@ -193,9 +197,129 @@ void Thread3(PVOID pvoid)
 		iNext+= iTemp;
 		iLine++;
 	}
-	_endthread();
+	_endthread();//结束进程3
 }
 
 LRESULT APIENTRY WndProc3(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static PARAMS params;
+
+	switch(message)
+	{
+	case WM_CREATE:
+		params.hwnd= hwnd;
+		params.cyChar= HIWORD(GetDialogBaseUnits());
+		_beginthread(Thread3, 0, &params);//创建进程3
+		return 0;
+	case WM_SIZE:
+		params.cyClient= HIWORD(lParam);
+		return 0;
+	case WM_DESTROY:
+		params.bKill= TRUE;
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+//Window4: Display circles of random radii
+void Thread4(PVOID pvoid)
+{
+	HDC hdc;
+	int iDiameter;
+	PPARAMS pparams;
+
+	pparams= (PPARAMS)pvoid;
+
+	while(!pparams->bKill)
+	{
+		InvalidateRect(pparams->hwnd, NULL, TRUE);
+		UpdateWindow(pparams->hwnd);
+
+		iDiameter= rand()%(max(1, min(pparams->cxClient, pparams->cyClient)));
+		hdc= GetDC(pparams->hwnd);
+
+		Ellipse(hdc, (pparams->cxClient- iDiameter)/2, 
+			(pparams->cyClient- iDiameter)/2, 
+			(pparams->cxClient+ iDiameter)/2, 
+			(pparams->cyClient+ iDiameter)/2);
+		ReleaseDC(pparams->hwnd, hdc);
+	}
+	_endthread();//结束进程4
+}
+
+LRESULT APIENTRY WndProc4(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static PARAMS params;
+
+	switch(message)
+	{
+	case WM_CREATE:
+		params.hwnd= hwnd;
+		params.cyChar= HIWORD(GetDialogBaseUnits());
+		_beginthread(Thread4, 0, &params);//创建进程4
+		return 0;
+	case WM_SIZE:
+		params.cxClient= LOWORD(lParam);
+		params.cyClient= HIWORD(lParam);
+		return 0;
+	case WM_DESTROY:
+		params.bKill= TRUE;
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+//Main window to create child windows
+LRESULT APIENTRY WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static HWND hwndChild[4];
+	static TCHAR* szChildClass[]= {
+		TEXT("Child1"), TEXT("Child2"), TEXT("Child3"), TEXT("Child4")
+	};
+	static WNDPROC ChildProc[]= {WndProc1, WndProc2, WndProc3, WndProc4 };
+	HINSTANCE hInstance;
+	int i, cxClient, cyClient;
+	WNDCLASS wndclass;
+
+	switch(message)
+	{
+	case WM_CREATE:
+		hInstance= (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
+		wndclass.style= CS_HREDRAW| CS_VREDRAW;
+		wndclass.cbClsExtra= 0;
+		wndclass.cbWndExtra= 0;
+		wndclass.hInstance= hInstance;
+		wndclass.hIcon= NULL;
+		wndclass.hCursor= LoadCursor(NULL, IDC_ARROW);
+		wndclass.hbrBackground= (HBRUSH)GetStockObject(WHITE_BRUSH);
+		wndclass.lpszMenuName= NULL;
+
+		//创建四个窗口，一旦创建成功了就不用管了 WM_CREATE和WM_SIZE里面就会开始每个窗口执行独立的进程并且不断循环
+		for(i=0; i<4;  i++)
+		{
+			wndclass.lpfnWndProc= ChildProc[i];
+			wndclass.lpszClassName= szChildClass[i];
+
+			RegisterClass(&wndclass);
+
+			hwndChild[i]= CreateWindow(szChildClass[i], NULL, WS_CHILDWINDOW| WS_BORDER| WS_VISIBLE,
+				0,0,0,0, hwnd, (HMENU)i, hInstance, NULL);
+		}
+		return 0;
+	case WM_SIZE:
+		cxClient= LOWORD(lParam);
+		cyClient= HIWORD(lParam);
+
+		for(i=0; i<4; i++)
+			MoveWindow(hwndChild[i], (i%2)*cxClient/2, (i>1)*cyClient/2, cxClient/2, cyClient/2, TRUE);
+		return 0;
+	case WM_CHAR:
+		if(wParam== '\x1B')
+			DestroyWindow(hwnd);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
