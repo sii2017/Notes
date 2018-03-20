@@ -5,7 +5,7 @@
 #include <math.h>
 #include <process.h>
 
-#define REP 1000000
+#define REP 100000
 
 #define STATUS_READY 0
 #define STATUS_WORKING 1
@@ -115,12 +115,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_RBUTTONDOWN:
 		params.bContinue= FALSE;
 		return 0;
-	case WM_CALC_DONE:
+	case WM_CALC_DONE:	//完成了计算
 		lTime= lParam;
 		iStatus= STATUS_DONE;
 		InvalidateRect(hwnd, NULL, TRUE);
 		return 0;
-	case WM_CALC_ABORTED:
+	case WM_CALC_ABORTED:	//终止了计算
 		iStatus= STATUS_READY;
 		InvalidateRect(hwnd, NULL, TRUE);
 		return 0;
@@ -129,6 +129,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		GetClientRect(hwnd, &rect);
 
+		//这里的代码很妙，并没有使用if来判断三种情况，而是将三种情况变成了三个字符串数组直接打印出来
 		wsprintf(szBuffer, szMessage[iStatus], REP, lTime);
 		DrawText(hdc, szBuffer, -1, &rect, 
 			DT_SINGLELINE| DT_CENTER| DT_VCENTER);
