@@ -8,7 +8,7 @@ EXPORT BOOL CALLBACK EdrCenterTextA(HDC, PRECT, PCSTR);
 EXPORT BOOL CALLBACK EdrCenterTextW(HDC, PRECT, PCWSTR);
 
 #ifdef UNICODE 
-#define EdrrCenterText EdrCenterTextW
+#define EdrCenterText EdrCenterTextW
 #else
 #define EdrCenterText EdrCenterTextA
 #endif
