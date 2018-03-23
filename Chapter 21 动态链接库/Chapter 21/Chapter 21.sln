@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EDRLIB", "EDRLIB\EDRLIB.vcp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EDRTEST", "EDRTEST\EDRTEST.vcproj", "{A225CD4D-0E26-4DE1-A341-EEDA4DF9A1D7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "STRLIB", "STRLIB\STRLIB.vcproj", "{95246D71-D505-46AD-90D4-BA79EE24D680}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{A225CD4D-0E26-4DE1-A341-EEDA4DF9A1D7}.Debug|Win32.Build.0 = Debug|Win32
 		{A225CD4D-0E26-4DE1-A341-EEDA4DF9A1D7}.Release|Win32.ActiveCfg = Release|Win32
 		{A225CD4D-0E26-4DE1-A341-EEDA4DF9A1D7}.Release|Win32.Build.0 = Release|Win32
+		{95246D71-D505-46AD-90D4-BA79EE24D680}.Debug|Win32.ActiveCfg = Debug|Win32
+		{95246D71-D505-46AD-90D4-BA79EE24D680}.Debug|Win32.Build.0 = Debug|Win32
+		{95246D71-D505-46AD-90D4-BA79EE24D680}.Release|Win32.ActiveCfg = Release|Win32
+		{95246D71-D505-46AD-90D4-BA79EE24D680}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
