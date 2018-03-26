@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <wchar.h>
 #include "strlib.h"
-//shared memory section(require/SECTION:shared, RWS in link options)
+//建立进程间可以共享的内存
 #pragma data_seg("shared")
 int iTotal= 0;
 WCHAR szStrings[MAX_STRINGS][MAX_LENGTH+1]= {'\0'};
