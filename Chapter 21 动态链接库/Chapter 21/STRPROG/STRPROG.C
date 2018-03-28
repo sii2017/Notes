@@ -1,6 +1,10 @@
+/*
+这里的代码有点问题，可能无法通过编译。
+原因应该是BOOL在STRLIB.H中重定义了。
+*/
 #include <windows.h>
 #include "strlib.h"
-#include "reource.h"
+#include "resource.h"
 
 typedef struct
 {
@@ -59,4 +63,107 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 BOOL CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	switch(message)
+	{
+	case WM_INITDIALOG:
+		SendDlgItemMessage(hDlg, IDC_STRING, EM_LIMITTEXT, MAX_LENGTH, 0);
+		return TRUE;
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case IDOK:
+			GetDlgItemText(hDlg, IDC_STRING, szString, MAX_LENGTH);
+			EndDialog(hDlg, TRUE);
+			return TRUE;
+		case IDCANCEL:
+			EndDialog(hDlg, FALSE);
+			return TRUE;
+		}
+		return FALSE;
+}
+
+BOOL CALLBACK GetStrCallBack(PTSTR pString, CBPARAM* pcbp)
+{
+	TextOut(pcbp->hdc, pcbp->xText, pcbp->yText, pString, lstrlen(pString));
+	if((pcbp->yText+= pcbp->yIncr)> pcbp->yMax)
+	{
+		pcbp->yText= pcbp->yStart;
+		if((pcbp->xText+= pcbp->xIncr)> pcbp->xMax)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static HINSTANCE hInst;
+	static int cxChar, cyChar, cxClient, cyClient;
+	static UINT iDataChangeMsg;
+	CBPARAM cbparam;
+	HDC hdc;
+	PAINTSTRUCT ps;
+	TEXTMETRIC tm;
+
+	switch(message)
+	{
+	case WM_CREATE:
+		hInst= ((LPCREATESTRUCT)lParam)->hInstance;
+		hdc= GetDC(hwnd);
+		GetTextMetrics(hdc, &tm);
+		cxChar= (int)tm.tmAveCharWidth;
+		cyChar= (int)(tm.tmHeight+ tm.tmExternalLeading);
+		ReleaseDC(hwnd, hdc);
+
+		iDataChangeMsg= RegisterWindowMessage(TEXT("StrProgDataChange"));
+		return 0;
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case IDM_ENTER:
+			if(DialogBox(hInst, TEXT("EnterDlg"), hwnd, &DlgProc))
+			{
+				if(AddString(szString))
+					PostMessage(HWND_BROADCAST, iDataChangeMsg, 0, 0):
+				else
+					MessageBeep(0);
+			}
+			break;
+		case IDM_DELETE:
+			if(DialogBox(hInst, TEXT("DeleteDlg"), hwnd, &DlgProc))
+			{
+				if(DeleteString(szString))
+					PostMessage(HWND_BROADCAST, iDataChangeMsg, 0 , 0);
+				else
+					MessageBeep(0);
+			}
+			break;
+		}
+		return 0;
+	case WM_SIZE:
+		cxClient= (int)LOWORD(lParam);
+		cyClient= (int)HIWORD(lParam);
+		return 0;
+	case WM_PAINT:
+		hdc= BeginPaint(hwnd, &ps);
+
+		cbparam.hdc= hdc;
+		cbparam.xText= cbparam.xStart= cxChar;
+		cbparam.xIncr= cxChar* MAX_LENGTH;
+		cbparam.yIncr= cyChar;
+		cbparam.xMax= cbparam.xIncr*(1+ cxClient/cbparam.xIncr);
+		cbparam.yMax= cyChar*(cyClient/cyChar-1);
+
+		GetStrings((GETSTRCB)GetStrCallBack, (PVOID)&cbparam);
+
+		EndPaint(hwnd, &ps);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	default:
+		if(message== iDataChangeMsg)
+			InvalidateRect(hwnd, NULL, TRUE);
+		break;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
