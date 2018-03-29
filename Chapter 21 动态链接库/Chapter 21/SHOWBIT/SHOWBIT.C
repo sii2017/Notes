@@ -1,3 +1,8 @@
+/*
+由于加载的是纯资源dll，所以没有lib文件，只有dll
+因此，在properties中的link/input/addition depends中，不需要输入XXX.lib
+在文件目录下只要复制进dll文件就可以了
+*/
 #include <windows.h>
 
 LRESULT CALLBACK WndProc(HWND,  UINT , WPARAM, LPARAM);
@@ -70,13 +75,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch(message)
 	{
 	case WM_CREATE:
-		if((hLibrary= LoadLibrary(TEXT("BITLIB.DLL")))== NULL)
+		if((hLibrary= LoadLibrary(TEXT("BITLIB.DLL")))== NULL)	//通过读取dll获取dll的句柄
 		{
 			MessageBox(hwnd, TEXT("Can not load BITLIB.DLL"), szAppName, 0);
 			return -1;
 		}
 		return 0;
-	case WM_CHAR:
+	case WM_CHAR:	//随便按什么键触发
 		if(hLibrary)
 		{
 			iCurrent++;
@@ -88,9 +93,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		if(hLibrary)
 		{
-			hBitmap= LoadBitmap(hLibrary, MAKEINTRESOURCE(iCurrent));
+			hBitmap= LoadBitmap(hLibrary, MAKEINTRESOURCE(iCurrent));	//第一个参数为句柄
 
-			if(!hBitmap)
+			if(!hBitmap)	//如果图片用完了，那么重新回到1进行循环
 			{
 				iCurrent= 1;
 				hBitmap= LoadBitmap(hLibrary, MAKEINTRESOURCE(iCurrent));

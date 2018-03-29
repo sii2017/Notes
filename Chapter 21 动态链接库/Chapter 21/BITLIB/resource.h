@@ -2,15 +2,15 @@
 // Microsoft Visual C++ generated include file.
 // Used by BITLIB.rc
 //
-#define IDB_BITMAP1                     101
-#define IDB_BITMAP2                     102
-#define IDB_BITMAP3                     103
-#define IDB_BITMAP4                     104
-#define IDB_BITMAP5                     105
-#define IDB_BITMAP6                     106
-#define IDB_BITMAP7                     107
-#define IDB_BITMAP8                     108
-#define IDB_BITMAP9                     109
+#define IDB_BITMAP1                     1
+#define IDB_BITMAP2                     2
+#define IDB_BITMAP3                     3
+#define IDB_BITMAP4                     4
+#define IDB_BITMAP5                     5
+#define IDB_BITMAP6                     6
+#define IDB_BITMAP7                     7
+#define IDB_BITMAP8                     8
+#define IDB_BITMAP9                     9
 
 // Next default values for new objects
 // 
