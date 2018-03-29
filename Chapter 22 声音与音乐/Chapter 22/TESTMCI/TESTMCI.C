@@ -1,6 +1,7 @@
 /*
 需要在项目的properties中linker的addition depends中添加WINMM.lib才能正确调用mci相关的函数。
-lib和dll应该都在c盘的固定路径里
+lib和dll应该都在c盘的固定路径里   
+实际上我并不知道这个程序是干嘛用的。
 */
 #include <windows.h>
 #include "resource.h"
@@ -11,6 +12,7 @@ TCHAR szAppName[]=  TEXT("TestMci");
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+	//建立对话框
 	if(-1== DialogBox(hInstance, szAppName, NULL, DlgProc))
 	{
 		MessageBox(NULL, TEXT("Something Wrong"), szAppName, MB_ICONERROR);
@@ -34,7 +36,8 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN)- rect.right+ rect.left)/2, 
 			(GetSystemMetrics(SM_CYSCREEN)- rect.bottom+ rect.top)/2, 
 			0,0, SWP_NOZORDER| SWP_NOSIZE);
-
+		
+		//获取输入区域的举兵，并且给于输入焦点
 		hwndEdit= GetDlgItem(hwnd, IDC_MAIN_EDIT);
 		SetFocus(hwndEdit);
 		return FALSE;
@@ -42,8 +45,8 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch(LOWORD(wParam))
 		{
 		case IDOK:
-			SendMessage(hwndEdit, EM_GETSEL, (WPARAM)&iCharBeg, (LPARAM)&iCharEnd);
-			iLineBeg= SendMessage(hwndEdit, EM_LINEFROMCHAR, iCharBeg, 0);
+			SendMessage(hwndEdit, EM_GETSEL, (WPARAM)&iCharBeg, (LPARAM)&iCharEnd);	//获取光标位置，如果有选中文字则显示开始和结束的位置
+			iLineBeg= SendMessage(hwndEdit, EM_LINEFROMCHAR, iCharBeg, 0);	//获得制定位置的行号
 			iLineEnd= SendMessage(hwndEdit, EM_LINEFROMCHAR, iCharEnd, 0);
 
 			for(iLine= iLineBeg; iLine<= iLineEnd; iLine++)
@@ -55,10 +58,12 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				 if(iLength==0)
 					 continue;
 
+				 //获取错误编号
 				 error= mciSendString(szCommand, szReturn, sizeof(szReturn)/ sizeof(TCHAR), hwnd);
 
 				 SetDlgItemText(hwnd, IDC_RETURN_STRING, szReturn);
 
+				 //根据错误编号获取错误信息
 				 mciGetErrorString(error, szError, sizeof(szError)/ sizeof(TCHAR));
 
 				 SetDlgItemText(hwnd, IDC_ERROR_STRING, szError);
