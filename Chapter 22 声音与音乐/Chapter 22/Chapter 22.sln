@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TESTMCI", "TESTMCI\TESTMCI.vcproj", "{55F751B1-9770-4DED-8B32-A6C9599F8FF6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SINEWAVE", "SINEWAVE\SINEWAVE.vcproj", "{E75A3398-479F-4AAC-8B6D-42C9A9331623}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +15,10 @@ Global
 		{55F751B1-9770-4DED-8B32-A6C9599F8FF6}.Debug|Win32.Build.0 = Debug|Win32
 		{55F751B1-9770-4DED-8B32-A6C9599F8FF6}.Release|Win32.ActiveCfg = Release|Win32
 		{55F751B1-9770-4DED-8B32-A6C9599F8FF6}.Release|Win32.Build.0 = Release|Win32
+		{E75A3398-479F-4AAC-8B6D-42C9A9331623}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E75A3398-479F-4AAC-8B6D-42C9A9331623}.Debug|Win32.Build.0 = Debug|Win32
+		{E75A3398-479F-4AAC-8B6D-42C9A9331623}.Release|Win32.ActiveCfg = Release|Win32
+		{E75A3398-479F-4AAC-8B6D-42C9A9331623}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
