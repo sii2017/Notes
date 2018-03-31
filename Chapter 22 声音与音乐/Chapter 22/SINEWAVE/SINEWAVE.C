@@ -1,3 +1,8 @@
+/*
+需要注意，尽管没有提示，但是如同TESTMCI
+需要在项目的properties中linker的addition depends中添加WINMM.lib才能正确调用mci相关的函数。
+lib和dll应该都在c盘的固定路径里   
+*/
 #include <windows.h>
 #include <math.h>
 #include "resource.h"
@@ -23,13 +28,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 VOID FillBuffer(PBYTE pBuffer, int iFreq)
 {
-	static double fAngle;
+	static double fAngle;	//静态变量将会自动初始化。
 	int i;
 
 	for(i=0; i<OUT_BUFFER_SIZE; i++)
 	{
 		pBuffer[i]= (BYTE)(127+ 127*sin(fAngle));
 		fAngle+= 2*PI*iFreq/SAMPLE_RATE;
+		/*
+		但是每周期的样本数可能带有小数，因此在使用时这种方法并不是很好。每个周期的尾部都会有间断。   
+		使它正常工作的关键是保留一个静态的「相位角」变量。此角初始化为0。第一个样本是0度正弦。
+		随后，相位角增加一个值，该值等于2π乘以频率再除以取样频率。用此相位角作为第二个样本，并且按此方法继续。一旦相位角超过2π弧度，则减去2π弧度，而不要把相位角再初始化为0。
+		*/
 		if(fAngle> 2*PI)
 			fAngle-= 2*PI;
 	}
@@ -50,11 +60,11 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 		hwndScroll= GetDlgItem(hwnd, IDC_SCROLL);
-		SetScrollRange(hwndScroll, SB_CTL, FREQ_MIN, FREQ_MAX, FALSE);
-		SetScrollPos(hwndScroll, SB_CTL, FREQ_INIT, TRUE);
+		SetScrollRange(hwndScroll, SB_CTL, FREQ_MIN, FREQ_MAX, FALSE);	//设置滚动条范围
+		SetScrollPos(hwndScroll, SB_CTL, FREQ_INIT, TRUE);	//设置滚动条初始位置
 		SetDlgItemInt(hwnd, IDC_TEXT, FREQ_INIT, FALSE);
 		return TRUE;
-	case WM_HSCROLL:
+	case WM_HSCROLL:		//控制滚动条的基本操作
 		switch(LOWORD(wParam))
 		{
 		case SB_LINELEFT:
@@ -83,14 +93,14 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch(LOWORD(wParam))
 		{
 		case IDC_ONOFF:
-			if(hWaveOut== NULL)
+			if(hWaveOut== NULL)	//唯一的一个按键
 			{
 				pWaveHdr1= malloc(sizeof(WAVEHDR));
 				pWaveHdr2= malloc(sizeof(WAVEHDR));
 				pBuffer1= malloc(OUT_BUFFER_SIZE);
 				pBuffer2= malloc(OUT_BUFFER_SIZE);
 
-				if(!pWaveHdr1|| !pWaveHdr2|| !pBuffer1|| !pBuffer2)
+				if(!pWaveHdr1|| !pWaveHdr2|| !pBuffer1|| !pBuffer2)	//如果申请失败则释放，并发出提示
 				{
 					if(!pWaveHdr1) free(pWaveHdr1);
 					if(!pWaveHdr2) free(pWaveHdr2);
@@ -113,7 +123,8 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				waveformat.wBitsPerSample= 8;
 				waveformat.cbSize= 0;
 
-				if(waveOutOpen(&hWaveOut, WAVE_MAPPER, &waveformat, (DWORD)hwnd, 0, CALLBACK_WINDOW)!=
+				//通过调用waveOutOpen函数，SINEWAVE打开波形声音设备以便输出
+				if(waveOutOpen(&hWaveOut, WAVE_MAPPER, &waveformat, (DWORD)hwnd, 0, CALLBACK_WINDOW)!=	//打开wav失败 这个也是很有趣，不等于noerror，即有error
 					MMSYSERR_NOERROR)
 				{
 					free(pWaveHdr1);
