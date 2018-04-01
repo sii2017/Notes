@@ -2,6 +2,7 @@
 需要注意，尽管没有提示，但是如同TESTMCI
 需要在项目的properties中linker的addition depends中添加WINMM.lib才能正确调用mci相关的函数。
 lib和dll应该都在c盘的固定路径里   
+调用顺序是waveOutOpen -> waveOutPrepareHeader ->waveOutWrite
 */
 #include <windows.h>
 #include <math.h>
@@ -149,6 +150,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				pWaveHdr1->lpNext= NULL;
 				pWaveHdr1->reserved= 0;
 
+				//该函数将在音频媒体中播放pWaveHdr1指定的数据
 				waveOutPrepareHeader(hWaveOut, pWaveHdr1, sizeof(WAVEHDR));
 
 				pWaveHdr2->lpData= pBuffer2;
@@ -160,6 +162,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				pWaveHdr2->lpNext= NULL;
 				pWaveHdr2->reserved= 0;
 
+				//该函数将在音频媒体中播放pWaveHdr2指定的数据
 				waveOutPrepareHeader(hWaveOut, pWaveHdr2, sizeof(WAVEHDR));
 			}
 			else	//if turning off waveform, reset waveform audio
