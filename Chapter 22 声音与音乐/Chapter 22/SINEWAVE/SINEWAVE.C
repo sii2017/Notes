@@ -174,6 +174,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case MM_WOM_OPEN:
+		//这里调用了两次waveOutWrite可能与波形的频率什么有关，当我注释掉一个以后，声音就会有间断，而两个一起播放则是连续的声音。
 		SetDlgItemText(hwnd, IDC_ONOFF, TEXT("Turn Off"));
 		//Send 2 buffers to waveform output device
 		FillBuffer(pBuffer1, iFreq);
