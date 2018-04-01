@@ -168,7 +168,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			else	//if turning off waveform, reset waveform audio
 			{
 				bShutOff= TRUE;
-				waveOutReset(hWaveOut);
+				waveOutReset(hWaveOut);		//产生一条MM_WOM_DONE消息
 			}
 			return TRUE;
 		}
@@ -183,18 +183,18 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		waveOutWrite(hWaveOut, pWaveHdr2, sizeof(WAVEHDR));
 		return TRUE;
 		//Message genereated when a buffer is finished
-	case MM_WOM_DONE:
+	case MM_WOM_DONE:		//由用户选择关闭按键的waveOutReset函数产生
 		if(bShutOff)
 		{
-			waveOutClose(hWaveOut);
+			waveOutClose(hWaveOut);	//产生一条MM_WOM_CLOSE消息
 			return TRUE;
 		}
 		//Fill and send out a new buffer
 		FillBuffer(((PWAVEHDR)lParam)->lpData, iFreq);
 		waveOutWrite(hWaveOut, (PWAVEHDR)lParam, sizeof(WAVEHDR));
 		return TRUE;
-	case MM_WOM_CLOSE:
-		waveOutUnprepareHeader(hWaveOut, pWaveHdr1, sizeof(WAVEHDR));
+	case MM_WOM_CLOSE:		//由MM_WOM_DONE中的waveOutClose产生
+		waveOutUnprepareHeader(hWaveOut, pWaveHdr1, sizeof(WAVEHDR));	//清除由 waveOutPrepareHeader 完成的准备	
 		waveOutUnprepareHeader(hWaveOut, pWaveHdr2, sizeof(WAVEHDR));
 		free(pWaveHdr1);
 		free(pWaveHdr2);
