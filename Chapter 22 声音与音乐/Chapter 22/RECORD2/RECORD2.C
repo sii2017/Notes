@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "..\\record1\\resource.h"
+#include "resource.h"
 
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 TCHAR szAppName[]= TEXT("Record2");
@@ -37,25 +37,25 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch(wParam)
 		{
-		case IDC_RECORD_BEG:
-			//Delete existing waveform file
+		case IDC_RECORD_BEG:	//录音开始
+			//先删除已经存在的录音
 			DeleteFile(szFileName);
-			//Open waveform audio
+			//发送mci消息来打开设备。与record1的waveInOpen累死，但是更便捷。
 			mciOpen.dwCallback= 0;
 			mciOpen.wDeviceID= 0;
-			mciOpen.lpstrDeviceType= TEXT("waveaudio");
+			mciOpen.lpstrDeviceType= TEXT("waveaudio");//说明设备型态
 			mciOpen.lpstrElementName= TEXT("");
 			mciOpen.lpstrAlias= NULL;
 			dwError= mciSendCommand(0, MCI_OPEN, MCI_WAIT| MCI_OPEN_TYPE| MCI_OPEN_ELEMENT, 
-				(DWORD)(LPMCI_OPEN_PARMS)&mciOpen);
+				(DWORD)(LPMCI_OPEN_PARMS)&mciOpen);	
 			if(dwError!=0)
 			{
 				ShowError(hwnd, dwError);
 				return TRUE;
 			}
 			//Save the Device ID
-			wDeviceID= mciOpen.wDeviceID;
-			//Bgin recording 
+			wDeviceID= mciOpen.wDeviceID;	//成功打开设备后可以获得设备ID，保存后之后使用
+			//发送mci消息来开始录音
 			mciRecord.dwCallback= (DWORD)hwnd;
 			mciRecord.dwFrom= 0;
 			mciRecord.dwTo= 0;
@@ -70,17 +70,17 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetFocus (GetDlgItem (hwnd, IDC_RECORD_END)) ;
 			bRecording= TRUE;
 			return TRUE;
-		case IDC_RECORD_END:
-			//Stop recording
+		case IDC_RECORD_END:	//按下end后，将收到该消息
+			//发送mci消息来停止
 			mciGeneric.dwCallback= 0;
 			mciSendCommand(wDeviceID, MCI_STOP, MCI_WAIT, 
 				(DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
-			//Save the file
+			//发送mci消息来保存文件
 			mciSave.dwCallback= 0;
 			mciSave.lpfilename= szFileName;
 			mciSendCommand(wDeviceID, MCI_SAVE, MCI_WAIT| MCI_SAVE_FILE, 
 				(DWORD)(LPMCI_SAVE_PARMS)&mciSave);
-			//Close the wavefrom device
+			//发送mci消息来关闭设备
 			mciSendCommand(wDeviceID, MCI_CLOSE, MCI_WAIT,
 				(DWORD)(LPMCI_GENERIC_PARMS)&mciGeneric);
 			//Enable andd disable buttons
@@ -92,12 +92,12 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SetFocus (GetDlgItem (hwnd, IDC_PLAY_BEG)) ;
 			bRecording= FALSE;
 			return TRUE;
-		case IDC_PLAY_BEG:
-			//Open waveform audio
+		case IDC_PLAY_BEG:	//播放录音
+			//发送mci消息打开设备
 			mciOpen.dwCallback= 0;
 			mciOpen.wDeviceID= 0;
 			mciOpen.lpstrDeviceType= NULL;
-			mciOpen.lpstrElementName= szFileName;
+			mciOpen.lpstrElementName= szFileName;	//指定文件名
 			mciOpen.lpstrAlias= NULL;
 			dwError= mciSendCommand(0, MCI_OPEN, MCI_WAIT|MCI_OPEN_ELEMENT, 
 				(DWORD)(LPMCI_OPEN_PARMS)&mciOpen);
@@ -109,7 +109,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			//Save the Device ID
 			wDeviceID= mciOpen.wDeviceID;
-			//Begin playing
+			//发送mci消息播放录音
 			mciPlay.dwCallback= (DWORD)hwnd;
 			mciPlay.dwFrom= 0;
 			mciPlay.dwTo= 0;
@@ -123,7 +123,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			EnableWindow (GetDlgItem (hwnd, IDC_PLAY_PAUSE), FALSE);
 			EnableWindow (GetDlgItem (hwnd, IDC_PLAY_END), FALSE);
 			SetFocus (GetDlgItem (hwnd, IDC_PLAY_BEG)) ;
-		case IDC_PLAY_PAUSE:
+		case IDC_PLAY_PAUSE:	//暂停，同上也是发送mci消息
 			if(!bPaused)
 			{
 				mciGeneric.dwCallback= 0;
@@ -143,7 +143,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				bPaused= FALSE;
 			}
 			return TRUE;
-		case IDC_PLAY_END:
+		case IDC_PLAY_END:	//结束，分别发送mci消息停止及关闭设备
 			//Stop and close
 			mciGeneric.dwCallback= 0;
 			mciSendCommand(wDeviceID, MCI_STOP, MCI_WAIT, 
@@ -162,10 +162,10 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return TRUE;
 		}
 		break;
-	case MM_MCINOTIFY:
+	case MM_MCINOTIFY:	//播放时，在声音文件结束后接收到MM_MCINOTIFY消息
 		switch(wParam)
 		{
-		case MCI_NOTIFY_SUCCESSFUL:
+		case MCI_NOTIFY_SUCCESSFUL:	//当播放结束或录音结束后发送mci消息
 			if(bPlaying)
 				SendMessage(hwnd, WM_COMMAND, IDC_PLAY_END, 0);
 			if(bRecording)
