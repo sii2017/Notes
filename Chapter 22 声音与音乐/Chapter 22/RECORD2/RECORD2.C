@@ -1,3 +1,8 @@
+/*
+要在链接依赖里面加上WIMM.LIB、
+这个程序主要介绍并使用了mciSendCommand函数，通过发送不同的消息，我们执行了录音，播放等一系列事情，仅仅只是需要发送消息即可
+这个方式比之前的record1要方便许多。
+*/
 #include <windows.h>
 #include "resource.h"
 

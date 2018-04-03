@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RECORD2", "RECORD2\RECORD2.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RECORD3", "RECORD3\RECORD3.vcproj", "{80448CB9-7D4A-4BAA-8698-B1782A918750}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ADDSYNTH", "ADDSYNTH\ADDSYNTH.vcproj", "{623DAC2E-B143-494A-B08D-383DC634FFB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{80448CB9-7D4A-4BAA-8698-B1782A918750}.Debug|Win32.Build.0 = Debug|Win32
 		{80448CB9-7D4A-4BAA-8698-B1782A918750}.Release|Win32.ActiveCfg = Release|Win32
 		{80448CB9-7D4A-4BAA-8698-B1782A918750}.Release|Win32.Build.0 = Release|Win32
+		{623DAC2E-B143-494A-B08D-383DC634FFB4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{623DAC2E-B143-494A-B08D-383DC634FFB4}.Debug|Win32.Build.0 = Debug|Win32
+		{623DAC2E-B143-494A-B08D-383DC634FFB4}.Release|Win32.ActiveCfg = Release|Win32
+		{623DAC2E-B143-494A-B08D-383DC634FFB4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
