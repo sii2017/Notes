@@ -99,6 +99,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hInstance= (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
 		icex.dwSize= sizeof(icex);
 		icex.dwICC= ICC_DATE_CLASSES;
+		//如果一个运行在 Windows XP 上的应用程序清单指定要使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，则需要 InitCommonControlsEx()。否则，将无法创建窗口。
 		InitCommonControlsEx(&icex);
 
 		pwaveform= malloc(sizeof(WAVEFORM)+ NUMSAMPS);
@@ -124,6 +125,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			+ GetSystemMetrics(SM_CYCAPTION), SWP_NOMOVE| SWP_NOZORDER| SWP_NOACTIVATE);
 
 		//create the 3 child windows
+		//这里创建窗口使用了DATETIMEPICK_CLASS，这是称为「Date-Time Picker」的通用控件
 		hwndDTP= CreateWindow(DATETIMEPICK_CLASS, TEXT(""), WS_BORDER|WS_CHILD|WS_VISIBLE|DTS_TIMEFORMAT, 
 			2*cxChar, cyChar, 12*cxChar, 4*cyChar/3, hwnd, (HMENU)ID_TIMEPICK, hInstance, NULL);
 		hwndCheck= CreateWindow(TEXT("Button"), TEXT("Set Alarm"), WS_CHILD|WS_VISIBLE| BS_AUTOCHECKBOX, 
