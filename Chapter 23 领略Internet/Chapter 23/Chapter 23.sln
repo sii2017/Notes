@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NETTIME", "NETTIME\NETTIME.vcproj", "{6090EB3F-DD67-432D-AC41-CBF9077F32A1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UPDDEMO", "UPDDEMO\UPDDEMO.vcproj", "{985AD0BA-FDDD-4A20-86E9-DAF2922BE3F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6090EB3F-DD67-432D-AC41-CBF9077F32A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6090EB3F-DD67-432D-AC41-CBF9077F32A1}.Debug|Win32.Build.0 = Debug|Win32
+		{6090EB3F-DD67-432D-AC41-CBF9077F32A1}.Release|Win32.ActiveCfg = Release|Win32
+		{6090EB3F-DD67-432D-AC41-CBF9077F32A1}.Release|Win32.Build.0 = Release|Win32
+		{985AD0BA-FDDD-4A20-86E9-DAF2922BE3F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{985AD0BA-FDDD-4A20-86E9-DAF2922BE3F2}.Debug|Win32.Build.0 = Debug|Win32
+		{985AD0BA-FDDD-4A20-86E9-DAF2922BE3F2}.Release|Win32.ActiveCfg = Release|Win32
+		{985AD0BA-FDDD-4A20-86E9-DAF2922BE3F2}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
