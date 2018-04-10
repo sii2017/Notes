@@ -149,3 +149,238 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(hwnd, WM_USER_GETFILES, 0, 0);
 			return 0;
 		}
+
+		//Otherwise, get files from internet
+		//But first check so we don't try to copy files to a cdrom
+		if(GetDriveType(NULL)== DRIVE_CDROM)
+		{
+			Message(hwnd, TEXT("Cannot run this program from CDROM"), 
+				szAppName, MB_OK|MB_ICONEXCLAMATION);
+			return 0;
+		}
+
+		//Ask user if an Internet connection is desired
+		if(IDYES== MessageBox(hwnd, TEXT("Update information from Internet?"),
+			szAppName, MB_YESNO|MB_ICONQUESTION))
+			DialogBox(hInst, szAppName, hwnd, DlgProc);
+		
+		SendMessage(hwnd, WM_USER_GETFILES, 0, 0);
+		return 0;
+	case WM_USER_GETFILES:
+		SetCursor(LoadCursor(NULL, IDC_WAIT));
+		ShowCursor(TRUE);
+
+		plist= GetFileList();
+		ShowCursor(FALSE);
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+
+		//Simulate a WM_SIZE message to alter scroll bar& repaint
+		SendMessage(hwnd, WM_SIZE, 0, MAKELONG(cxClient, cyClient));
+		InvalidateRect(hwnd, NULL, TRUE);
+		return 0;
+	case WM_PAINT:
+		hdc=BeginPaint(hwnd, &ps);
+		SetTextAlign(hdc, TA_UPDATECP);
+
+		si.cbSize= sizeof(SCROLLINFO);
+		si.fMask= SIF_POS;
+		GetScrollInfo(hwnd, SB_VERT, &si);
+
+		if(plist)
+		{
+			for(i=0; i<plist->iNum; i++)
+			{
+				MoveToEx(hdc, cxChar, (i-si.nPos)*cyChar, NULL);
+				TextOut(hdc, 0, 0, plist->info[i].szFilename, 
+					lstrlen(plist->info[i].szFilename));
+				TextOut(hdc, 0, 0, TEXT(":"), 2);
+				TextOutA(hdc, 0, 0, plist->info[i].szContents, 
+					strlen(plist->info[i].szContents));
+			}
+		}
+		EndPaint(hwnd, &ps);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	static PARAMS params;
+	switch(message)
+	{
+	case WM_INITDIALOG:
+		params.bContinue= TRUE;
+		params.hwnd= hwnd;
+
+		_beginthread(FtpThread, 0, &params);
+		return TRUE;
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case INCANCEL:
+			params.bContinue= FALSE;
+			return TRUE;
+		case IDOK:
+			EndDialog(hwnd, 0);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+void FtpThread(PVOID parg)
+{
+	BOOL bSuccess;
+	HINTERNET hIntSession, hFtpSession, hFind;
+	HWND hwndStatus, hwndButton;
+	PARAMS* pparams;
+	TCHAR szBuffer[64];
+	WIN32_FIND_DATA finddata;
+	pparams= parg;
+	hwndStatus= GetDlgItem(pparams->hwnd, IDC_STATUS);
+	hwndButton= GetDlgItem(pparams->hwnd, IDCANCEL);
+
+	//Open an internet session 
+	hIntSession= InternetOpen(szAppName, INTERNET_OPEN_TYPE_PRECONFIG, NULL,
+		NULL, INTERNET_FLAG_ASYNC);
+	if(hInetSession== NULL)
+	{
+		wsprintf(szBuffer, TEXT("InternetOpen error %i"), GetLastError());
+		ButtonSwitch(hwndStatus, hwndButton, szBuffer);
+		_endthread();
+	}
+
+	SetWindowText(hwndStatus, TEXT("Internet session opened..."));
+
+	//Check if user has pressed cancel
+	if(!pparams->bContinue)
+	{
+		InternetCloseHandle(hIntSession);
+		ButtonSwitch(hwndStatus, hwndButton, NULL);
+		_endthread();
+	}
+
+	//Open an FTP session
+	hFtpSession=  InternetConnect(hIntSession, FTPSERVER, INTERNET_DEFAULT_FTP_PORT,
+		NULL, NULL, INTERNET_SERVICE_FTP, 0, 0);
+
+	if(hFtpSession== NULL)
+	{
+		InternetCloseHandle(hIntSession);
+		wsprintf(szBuffer, TEXT("InternetConnect error %i"), GetLastError());
+		ButtonSwitch(hwndStatus, hwndButton, szBuffer);
+		_endthread();
+	}
+
+	SetWindowText(hwndStatus, TEXT("FTP Session opened...."));
+	//Check if user has pressed Cancel
+	if(!pparams->bContinue)
+	{
+		InternetCloseHandle(hFtpSession);
+		InternetCloseHandle(hIntSession);
+		ButtonSwitch(hwndStatus, hwndButton, NULL);
+		_endthread();
+	}
+
+	//Set the directory
+	bSuccess= FtpSetCurrentDirectory(hFtpSession, DIRECTORY);
+	if(!bSuccess)
+	{
+		InternetCloseHandle(hFtpSession);
+		InternetCloseHandle(hIntSession);
+		wsprintf(szBuffer, TEXT("Cannot setdirectory to %s"), DIRECTORY);
+		ButtonSwitch(hwndStatus, hwndButton, szBuffer);
+		_endthread();
+	}
+
+	SetWindowText(hwndStatus, TEXT("Directroy found..."));
+	//Check if user has pressed Cancel
+	if(!pparams->bContinue)
+	{
+		InternetCloseHandle(hFtpSession);
+		InternetCloseHandle(hIntSession);
+		ButtonSwitch(hwndStatus, hwndButton, NULL);
+		_endthread(;
+	}
+
+	//Get the first file fitting the template
+	hFind= FtpFineFirstFile(hFtpSession, TEMPLATE, &finddata, 0, 0);
+	if(hFind== NULL)
+	{
+		InternetCloseHandle(hFtpSession);
+		InternetCloseHandle(hIntSession);
+		ButtonSwitch(hwndStatus, hwndButton, TEXT("Cannot find files"));
+		_endthread();
+	}
+
+	do
+	{
+		//check if user has pressed cancel
+		if(!pparams->bContinue)
+		{
+			InternetCloseHandle(hFind);
+			InternetCloseHandle(hFtpSession);
+			InternetCloseHandle(hIntSession);
+			ButtonSwitch(hwndStatus, hwndButton, NULL);
+			_endthread();
+		}
+
+		//Copy the file from internet to local hard disk, but fail if the filealready exists
+		wsprintf(szBuffer, TEXT("Reading file %s..."), finddata.cFileName);
+		SetWindowText(hwndStatus, szBuffer);
+		FtpGetFile(hFtpSession, finddata.cFileName, finddata.cFileName, TRUE, 
+			FILE_ATTRIBUTE_NORMAL, FTP_TRANSFER_TYPE_BINARY, 0);
+	}
+	while(InternetFindNextFile(hFind, &finddata));
+	InternetCloseHandle(hFind);
+	InternetCloseHandle(hFtpSession);
+	InternetCloseHandle(hIntSession);
+
+	ButtonSwitch(hwndStatus, hwndButton, TEXT("Internet DownLoad Complete"));
+}
+
+VOID ButtonSwitch(HWND hwndStatus, HWND hwndButton, TCHAR* szText)
+{
+	if(szText)
+		SetWindowText(hwndStatus, szText);
+	else
+		SetWindowText(hwndStatus, TEXT("Internet Session Cancelled"));
+	SetWindowText(hwndButton, TEXT("OK"));
+	SetWindowLong(hwndbutton, GWL_ID, IDOK);
+}
+
+FILELIST* GetFileList(void)
+{
+	DWORD dwRead;
+	FILELIST* plist;
+	HANDLE hFile, hFind;
+	int iSize, iNum;
+	WIN32_FIND_DATA finddata;
+
+	hFind= FindFirstFile(TEMPLATE, &finddata);
+	if(hFind== INVALID_HANDLE_VALUE)
+		return NULL;
+	plist= NULL;
+	iNum= 0;
+
+	do
+	{
+		hFile= CreateFile(finddata.cFileName, GENERIC_READ, FILE_SHARE_READ, 
+			NULL, OPEN_EXISTING, 0, NULL);
+
+		if(hFile== INVALID_HANDLE_VALUE)
+			continue;
+
+		iSize= GetFileSize(hFile, NULL);
+
+		if(iSize== (DWORD)-1)
+		{
+			CloseHandle(hFile);
+			continue;
+		}
+
+		plist= realloc(plist, sizeof(FILELIST)+ iNum*sizeof(FILEINFO));//1623
