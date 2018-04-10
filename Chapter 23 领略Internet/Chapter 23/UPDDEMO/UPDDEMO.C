@@ -6,7 +6,7 @@
 #define WM_USER_CHECKFILES (WM_USER+1)
 #define WM_USER_GETFILES (WM_USER+2)
 
-#define FTRSERVER TEXT("ftp.cpetzold.com")
+#define FTPSERVER TEXT("ftp.cpetzold.com")
 #define DIRECTORY TEXT("cpetzold.com/ProgWin/UpdDemo")
 #define TEMPLATE TEXT("UD??????.TEXT")
 
@@ -36,7 +36,7 @@ BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
 VOID FtpThread(PVOID);
 VOID ButtonSwitch(HWND, HWND, TCHAR*);
 FILELIST* GetFileList(VOID);
-int Compare(cocnst FILEINFO*, const FILEINFO*);
+int Compare(const FILEINFO*, const FILEINFO*);
 
 HINSTANCE hInst;
 TCHAR szAppName[]= TEXT("UpdDemo");
@@ -144,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		GetSystemTime(&st);
 		wsprintf(szFilename, TEXT("UD%04i%02i.TXT"), st.wYear, st.wMonth);
 		//Check if the file exists; if so, read all the files
-		if(GetFileAtrtributes(szFilename)!= (DWORD)-1)
+		if(GetFileAttributes(szFilename)!= (DWORD)-1)
 		{
 			SendMessage(hwnd, WM_USER_GETFILES, 0, 0);
 			return 0;
@@ -154,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//But first check so we don't try to copy files to a cdrom
 		if(GetDriveType(NULL)== DRIVE_CDROM)
 		{
-			Message(hwnd, TEXT("Cannot run this program from CDROM"), 
+			MessageBox(hwnd, TEXT("Cannot run this program from CDROM"), 
 				szAppName, MB_OK|MB_ICONEXCLAMATION);
 			return 0;
 		}
@@ -221,7 +221,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
 		{
-		case INCANCEL:
+		case IDCANCEL:
 			params.bContinue= FALSE;
 			return TRUE;
 		case IDOK:
@@ -247,7 +247,7 @@ void FtpThread(PVOID parg)
 	//Open an internet session 
 	hIntSession= InternetOpen(szAppName, INTERNET_OPEN_TYPE_PRECONFIG, NULL,
 		NULL, INTERNET_FLAG_ASYNC);
-	if(hInetSession== NULL)
+	if(hIntSession== NULL)
 	{
 		wsprintf(szBuffer, TEXT("InternetOpen error %i"), GetLastError());
 		ButtonSwitch(hwndStatus, hwndButton, szBuffer);
@@ -304,11 +304,11 @@ void FtpThread(PVOID parg)
 		InternetCloseHandle(hFtpSession);
 		InternetCloseHandle(hIntSession);
 		ButtonSwitch(hwndStatus, hwndButton, NULL);
-		_endthread(;
+		_endthread();
 	}
 
 	//Get the first file fitting the template
-	hFind= FtpFineFirstFile(hFtpSession, TEMPLATE, &finddata, 0, 0);
+	hFind= FtpFindFirstFile(hFtpSession, TEMPLATE, &finddata, 0, 0);
 	if(hFind== NULL)
 	{
 		InternetCloseHandle(hFtpSession);
@@ -350,7 +350,7 @@ VOID ButtonSwitch(HWND hwndStatus, HWND hwndButton, TCHAR* szText)
 	else
 		SetWindowText(hwndStatus, TEXT("Internet Session Cancelled"));
 	SetWindowText(hwndButton, TEXT("OK"));
-	SetWindowLong(hwndbutton, GWL_ID, IDOK);
+	SetWindowLong(hwndButton, GWL_ID, IDOK);
 }
 
 FILELIST* GetFileList(void)
@@ -383,4 +383,30 @@ FILELIST* GetFileList(void)
 			continue;
 		}
 
-		plist= realloc(plist, sizeof(FILELIST)+ iNum*sizeof(FILEINFO));//1623
+		plist= realloc(plist, sizeof(FILELIST)+ iNum*sizeof(FILEINFO));
+
+		//Allocate space and save the filename 
+		plist->info[iNum].szFilename= malloc(lstrlen(finddata.cFileName)+ sizeof(TCHAR));
+		lstrcpy(plist->info[iNum].szFilename, finddata.cFileName);
+		//Allocate space and save the contents
+		plist->info[iNum].szContents= malloc(iSize+1);
+		ReadFile(hFile, plist->info[iNum].szContents, iSize, &dwRead, NULL);
+		plist->info[iNum].szContents[iSize]= 0;
+
+		CloseHandle(hFile);
+		iNum++;
+	}
+
+	while(FindNextFile(hFind, &finddata));
+	FindClose(hFind);
+
+	//Sort the files by filename
+	qsort(plist->info, iNum, sizeof(FILEINFO), Compare);
+	plist->iNum= iNum;
+	return plist;
+}
+
+int Compare(const FILEINFO* pinfo1, const FILEINFO* pinfo2)
+{
+	return lstrcmp(pinfo2->szFilename, pinfo1->szFilename);
+}
