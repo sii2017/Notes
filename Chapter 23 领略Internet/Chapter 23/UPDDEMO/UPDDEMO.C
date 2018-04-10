@@ -1,3 +1,8 @@
+/*
+需要在附加支持项中添加Wininet.lib
+这个程序大部分内容已经了解，唯一的问题是InternetOpen函数返回了NULL代表了失败，书上未写，百度上也没有结果。推测是该FTP服务器已经关闭了。等以后自己会创建FTP服务器再进行尝试确认。
+这是本书最后一个程序
+*/
 #include <windows.h>
 #include <wininet.h>
 #include <process.h>
@@ -43,7 +48,7 @@ TCHAR szAppName[]= TEXT("UpdDemo");
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
-	//正常创建窗口，并且创建一个dialog
+	//正常创建窗口，当中会发送一条消息WM_USER_CHECKFILES
 	HWND hwnd;
 	MSG msg;
 	WNDCLASS wndclass;
@@ -139,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
 		InvalidateRect(hwnd, NULL, TRUE);
 		return 0;
-	case WM_USER_CHECKFILES:
+	case WM_USER_CHECKFILES://获取时间以及确认驱动器是硬盘还是CDROM，如果是CDROM则不行
 		//Get the system date& form filename from year and month
 		GetSystemTime(&st);
 		wsprintf(szFilename, TEXT("UD%04i%02i.TXT"), st.wYear, st.wMonth);
@@ -162,6 +167,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//Ask user if an Internet connection is desired
 		if(IDYES== MessageBox(hwnd, TEXT("Update information from Internet?"),
 			szAppName, MB_YESNO|MB_ICONQUESTION))
+			//创建对话框
 			DialogBox(hInst, szAppName, hwnd, DlgProc);
 		
 		SendMessage(hwnd, WM_USER_GETFILES, 0, 0);
@@ -170,7 +176,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SetCursor(LoadCursor(NULL, IDC_WAIT));
 		ShowCursor(TRUE);
 
-		plist= GetFileList();
+		plist= GetFileList();	//获取文件列表
 		ShowCursor(FALSE);
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
 
@@ -216,7 +222,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		params.bContinue= TRUE;
 		params.hwnd= hwnd;
 
-		_beginthread(FtpThread, 0, &params);
+		_beginthread(FtpThread, 0, &params);		//我的程序在副线程出了错误
 		return TRUE;
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
@@ -244,12 +250,12 @@ void FtpThread(PVOID parg)
 	hwndStatus= GetDlgItem(pparams->hwnd, IDC_STATUS);
 	hwndButton= GetDlgItem(pparams->hwnd, IDCANCEL);
 
-	//Open an internet session 
+	//Open an internet session 初始化一个应用程序，以使用 WinINet 函数。这里返回了NULL失败了。
 	hIntSession= InternetOpen(szAppName, INTERNET_OPEN_TYPE_PRECONFIG, NULL,
 		NULL, INTERNET_FLAG_ASYNC);
 	if(hIntSession== NULL)
 	{
-		wsprintf(szBuffer, TEXT("InternetOpen error %i"), GetLastError());
+		wsprintf(szBuffer, TEXT("InternetOpen error %i"), GetLastError());			//我的程序在这里显示error 0，网上查看说0表示操作成功，但是为何这里要退出程序呢
 		ButtonSwitch(hwndStatus, hwndButton, szBuffer);
 		_endthread();
 	}
@@ -353,6 +359,7 @@ VOID ButtonSwitch(HWND hwndStatus, HWND hwndButton, TCHAR* szText)
 	SetWindowLong(hwndButton, GWL_ID, IDOK);
 }
 
+//还没细看
 FILELIST* GetFileList(void)
 {
 	DWORD dwRead;

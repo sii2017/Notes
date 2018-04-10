@@ -33,4 +33,16 @@ fSuccess = FtpRenameFile (hFtpSession, szOldName, szNewName) ;
 最后，下面两个高级函数特别有用：FtpGetFile调用将文件从FTP服务器复制到本地内存，它合并了FtpFileOpen、FileCreate、InternetReadFile、WriteFile、InternetCloseHandle和CloseHandle调用。FtpGetFile的另一个参数是一个旗标，如果本地已经存在同名文件，那么该旗标将导致函数呼叫失败。FtpPutFile与此函数类似，用于将文件从本地内存复制到FTP服务器。       
 ### 更新展示程序
 程序UPDDEMO，展示了用WinInet FTP函数在第二个线程执行期间从匿名FTP服务器上下载文件的方法。    
-参考UPDDEMO
+**参考UPDDEMO**     
+UPDDEMO使用的文件名称是UDyyyymm.TXT，其中yyyy是4位阿拉伯数字的年数（当然适用于2000），mm是2位阿拉伯数字的月数。这里假定程序可以享有每个月都有更新文件的好处。这些文件可能是整个月刊，而由于阅读效率上的考虑，让程序将其下载到本地储存媒体上。    
+因此，WinMain在呼叫ShowWindow和UpdateWindow来显示UPDDEMO主窗口以后，向WndProc发送程序定义的WM_USER_CHECKFILES消息。WndProc通过获得目前的年、月并检查该年月UDyyyymm.TXT文件所在的内定目录来处理此消息。这种文件的存在意义在于UPDDEMO会被完全更新（当然，事实并非如此。一些过时的文件将漏掉。如果要做得更完整，程序得进行更广泛的检测）。在这种情况下，UPDDEMO向自己发送一个WM_USER_GETFILES消息，它通过呼叫GetFileList函数来处理。这是UPDDEMO.C中稍长的一个函数，但它并不是特别有用，它所做的全部工作就是将所有的UDyyyymm.TXT文件读到动态配置的FILELIST型态结构中，该结构是在程序顶部定义的，然后让程序在其显示区域显示这些文件的内容。    
+如果UPDDEMO没有最新的文件，那么它必须透过Internet进行更新。程序首先询问使用者这样做是否「OK」。如果是，程序将显示一个简单的对话框，其中只有一个「Cancel」按钮和一个ID为IDC_STATUS的静态文字区。下载时，此静态文字区向使用者提供状态报告，并且允许使用者取消过于缓慢的更新作业。此对话程序的名称是DlgProc。    
+DlgProc很简单，它建立了一个包括自身窗口句柄的PARAMS型态的结构以及一个名称为bContinue的BOOL变量，然后呼叫_ beginthread来执行第二个线程。    
+FtpThread函数透过使用下面的呼叫来完成实际的传输：InternetOpen、InternetConnect、FtpSetCurrentDirectory、FtpFindFirstFile、InternetFindNextFile、FtpGetFile和InternetCloseHandle（三次）。如同大多数程序代码，该线程函数如果略过错误检查、让使用者了解下一步的操作情况以及允许使用者随意取消整个显示的那些步骤，那么它将变得简洁许多。FtpThread函数透过用hwndStatus句柄呼叫SetWindowText来让使用者知道进展情况，这里指的是对话框中间的静态文字区。    
+线程可以依照下面的三种方式之一来终止：    
+第一种，FtpThread可能遇到从WinInet函数传回的错误。如果是这样，它将清除并编排错误字符串的格式，然后将此字符串（连同对话框文字区句柄和「Cancel」按钮的句柄一起）传递给ButtonSwitch。ButtonSwitch是一个小函数，它显示了文字字符串，并将「Cancel」按钮转换成「OK」按钮－不只是按钮上的文字字符串的转换，还包括控件ID的转换。这样就允许使用者按下「OK」按钮来结束对话框。     
+第二种方式，FtpThread能在没有任何错误的情况下完成任务，其处理方法和遇到错误时的方法一样，只不过对话框中显示的字符串为「Internet Download Complete」。    
+第三种方式，使用者可以在程序中选择取消下载。这时，DlgProc将PARAMS结构的bContinue字段设定为FALSE。FtpThread频繁地检查该值，如果bContinue等于FALSE，那么函数将做好应该进行的收拾工作，并以NULL文字参数呼叫ButtonSwitch，此参数表示显示了字符串「Internet Session Cancelled」。同样，使用者必须按下「OK」按钮来关闭对话框。    
+虽然UPDDEMO取得的每个文件只能显示一行，但我（本书的作者）可以用这个程序来告诉您（本书的读者）本书的更新内容以及其它信息，您也可以在网站上发现更详细的信息。因此，UPDDEMO成为我向您传送信息的方法，并且可以让本书的内容延续到最后一页之后。（这算是广告嘛）    
+**这个程序大部分内容已经了解，唯一的问题是InternetOpen函数返回了NULL代表了失败，书上未写，百度上也没有结果。推测是该FTP服务器已经关闭了。等以后自己会创建FTP服务器再进行尝试确认。**    
+整本结束。（撒花
