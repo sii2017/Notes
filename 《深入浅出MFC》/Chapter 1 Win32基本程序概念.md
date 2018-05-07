@@ -99,8 +99,10 @@ LONG OnAbout(HWND hWnd, UINT wMsg, UINT wParam, LONG lParam)
 ```   
 这么一来，WndProc 和OnCommand 永远不必改变，每有新要处理的消息，只要在_messageEntries[ ] 和_commandEntries[ ] 两个数组中加上新元素，并针对新消息撰写新的处理例程即可。    
 这种观念以及作法就是MFC 的Message Map 的雏形。MFC 把其中的动作包装得更好更精致（当然因此也就更复杂得多），成为一张庞大的消息地图；程序一旦获得消息，就可以按图上溯，直到被处理为止。    
+### 对话框
+![](https://github.com/sii2017/image/blob/master/dialog.jpg)     
 ### 程序的生命周期
-1. 程序初始化过程中调用CreateWindow，为程序建立了一个窗口，做为程序的萤幕舞台。CreateWindow 产生窗口之后会送出WM_CREATE 直接给窗口函数，后者于是可以在此时机做些初始化动作（例如配置内存、开文件、读初始资料...）。    
+>1. 程序初始化过程中调用CreateWindow，为程序建立了一个窗口，做为程序的萤幕舞台。CreateWindow 产生窗口之后会送出WM_CREATE 直接给窗口函数，后者于是可以在此时机做些初始化动作（例如配置内存、开文件、读初始资料...）。    
 2. 程序活着的过程中，不断以GetMessage 从消息贮列中抓取消息。如果这个消息是WM_QUIT，GetMessage 会传回0 而结束while 循环，进而结束整个程序。    
 3. DispatchMessage 透过Windows USER 模块的协助与监督，把消息分派至窗口函数。消息将在该处被判别并处理。    
 4. 程序不断进行2和3的动作。     
@@ -108,3 +110,6 @@ LONG OnAbout(HWND hWnd, UINT wMsg, UINT wParam, LONG lParam)
 6. DefWindowProc 收到WM_CLOSE 后， 调用DestroyWindow 把窗口清除。DestroyWindow 本身又会送出WM_DESTROY。     
 7. 程序对WM_DESTROY 的标准反应是调用PostQuitMessage。     
 8. PostQuitMessage 没什么其它动作，就只送出WM_QUIT 消息，准备让消息循环中的GetMessage 取得，如步骤2，结束消息循环。    
+
+操作系统与应用程序职司不同，二者是互相合作的关系，所以必需各做各的份内事，并互以消息通知对方。   
+如果不依据这个游戏规则，可能就会有麻烦产生。你可以作一个小实验，在窗口函数中拦截WM_DESTROY，但不调用PostQuitMessage。你会发现当选择系统菜单中的Close 时，屏幕上这个窗口消失了，（因为窗口摧毁及数据结构的释放是DefWindowProc 调用DestroyWindow 完成的），但是应用程序本身并没有结束（因为消息循环结束不了），它还留存在内存中。    
