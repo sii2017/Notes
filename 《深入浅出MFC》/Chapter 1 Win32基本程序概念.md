@@ -112,4 +112,20 @@ LONG OnAbout(HWND hWnd, UINT wMsg, UINT wParam, LONG lParam)
 8. PostQuitMessage 没什么其它动作，就只送出WM_QUIT 消息，准备让消息循环中的GetMessage 取得，如步骤2，结束消息循环。    
 
 操作系统与应用程序职司不同，二者是互相合作的关系，所以必需各做各的份内事，并互以消息通知对方。   
-如果不依据这个游戏规则，可能就会有麻烦产生。你可以作一个小实验，在窗口函数中拦截WM_DESTROY，但不调用PostQuitMessage。你会发现当选择系统菜单中的Close 时，屏幕上这个窗口消失了，（因为窗口摧毁及数据结构的释放是DefWindowProc 调用DestroyWindow 完成的），但是应用程序本身并没有结束（因为消息循环结束不了），它还留存在内存中。    
+如果不依据这个游戏规则，可能就会有麻烦产生。你可以作一个小实验，在窗口函数中拦截WM_DESTROY，但不调用PostQuitMessage。你会发现当选择系统菜单中的Close 时，屏幕上这个窗口消失了，（因为窗口摧毁及数据结构的释放是DefWindowProc 调用DestroyWindow 完成的），但是应用程序本身并没有结束（因为消息循环结束不了），它还留存在内存中。  
+### 一个进程的诞生与死亡 
+执行一个程序，必然就产生一个进程（process）。最直接的程序执行方式就是在shell中以鼠标双击某一个可执行文件图标（假设其为App.exe），执行起来的App 进程其实是shell 调用CreateProcess 激活的。    
+让我们看看整个流程：    
+1. shell 调用CreateProcess 激活App.exe。   
+2. 系统产生一个「进程核心对象」，计数值为1。   
+3. 系统为此进程建立一个4GB 地址空间。   
+4. 加载器将必要的码加载到上述地址空间中，包括App.exe 的程序、资料，以及所需的动态联结函数库（DLLs）。加载器如何知道要加载哪些DLLs呢？它们被记录在可执行文件（PE文件格式）的.idata section 中。    
+5. 系统为此进程建立一个执行线程，称为主执行线程（primary thread）。执行线程才是CPU时间的分配对象。   
+6. 系统调用C runtime 函数库的Startup code。   
+7. Startup code 调用App 程序的WinMain 函数。   
+8. App 程序开始运作。   
+9. 使用者关闭App 主窗口，使WinMain 中的消息循环结束掉，于是WinMain 结束。  
+10. 回到Startup code。   
+11. 回到系统，系统调用ExitProcess 结束进程。     
+可以说，透过这种方式执行起来的所有Windows 程序，都是shell 的子进程。    
+本来，母进程与子进程之间可以有某些关系存在，但shell在调用CreateProcess时已经把母子之间的脐带关系剪断了，因此它们事实上是独立实例。    
