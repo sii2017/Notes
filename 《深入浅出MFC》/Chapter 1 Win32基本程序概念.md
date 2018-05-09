@@ -129,3 +129,74 @@ LONG OnAbout(HWND hWnd, UINT wMsg, UINT wParam, LONG lParam)
 11. 回到系统，系统调用ExitProcess 结束进程。     
 可以说，透过这种方式执行起来的所有Windows 程序，都是shell 的子进程。    
 本来，母进程与子进程之间可以有某些关系存在，但shell在调用CreateProcess时已经把母子之间的脐带关系剪断了，因此它们事实上是独立实例。    
+### 产生子进程
+可以通过一个函数来专门激活其他的程序，只是这个函数的参数较为复杂。   
+```c
+CreateProcess(   
+LPCSTR lpApplicationName,   
+LPSTR lpCommandLine,   
+LPSECURITY_ATTRIBUTES lpProcessAttributes,   
+LPSECURITY_ATTRIBUTES lpThreadAttributes,   
+BOOL bInheritHandles,   
+DWORD dwCreationFlags,   
+LPVOID lpEnvironment,    
+LPCSTR lpCurrentDirectory,   
+LPSTARTUPINFO lpStartupInfo,    
+LPPROCESS_INFORMATION lpProcessInformation   
+);    
+```      
+**第一个参数**lpApplicationName指定可执行档名称。   
+**第二个参数**lpCommandLine指定欲传给新进程的命令列（command line）参数。   
+> 如果你指定了lpApplicationName，但没有扩展名，系统并不会主动为你加上.EXE 扩展名；   
+> 如果没有指定完整路径，系统就只在目前工作目录中寻找。但如果你指定lpApplicationName为NULL的话，系统会以lpCommandLine的第一个「段落」做为可执行档档名；   
+> 如果这个档名没有指定扩展名，就采用预设的".EXE" 扩展名；   
+> 如果没有指定路径，Windows 就依照五个搜寻路径来寻找可执行文件，分别是：   
+1. 调用者的可执行文件所在目录   
+2. 调用者的目前工作目录   
+3. Windows 目录   
+4. Windows System 目录   
+5. 环境变量中的path 所设定的各目录   
+  
+```c
+//系统将执行E:\CWIN95\NOTEPAD.EXE，命令列参数是"README.TXT"。    
+CreateProcess("E:\\CWIN95\\NOTEPAD.EXE", "README.TXT",...);    
+//系统将依照搜寻次序，将第一个被找到的NOTEPAD.EXE执行起来，并转送命令列参数"README.TXT" 给它。    
+CreateProcess(NULL, "NOTEPAD README.TXT",...);    
+```  
+建立新进程之前，系统必须做出两个核心对象，也就是**「进程对象」和「执行线程对象」**。CreateProcess 的**第三个参数和第四个参数**分别指定这两个核心对象的安全属性。    
+**第五个参数**（TRUE 或FALSE）则用来设定这些安全属性是否要被继承。   
+**第六个参数**dwCreationFlags 可以是许多常数的组合，会影响到进程的建立过程。这些常数中比较常用的是CREATE_SUSPENDED，它会使得子进程产生之后，其主执行线程立刻被暂停执行。   
+**第七个参数**lpEnvironment可以指定进程所使用的环境变量区。通常我们会让子进程继承父进程的环境变量，那么这里要指定NULL。    
+**第八个参数**lpCurrentDirectory用来设定子进程的工作目录与工作磁盘。如果指定NULL，子进程就会使用父进程的工作目录与工作磁盘。   
+**第九个参数**lpStartupInfo 是一个指向STARTUPINFO 结构的指针。这是一个庞大的结构，可以用来设定窗口的标题、位置与大小，详情请看API 使用手册。    
+**最后一个参数**是一个指向PROCESS_INFORMATION 结构的指针：   
+```c
+typedef struct _PROCESS_INFORMATION {   
+HANDLE hProcess;   
+HANDLE hThread;   
+DWORD dwProcessId;   
+DWORD dwThreadId;   
+} PROCESS_INFORMATION;   
+```    
+当系统为我们产生**「进程对象」和「执行线程对象」**，它会把两个对象的句柄（handle）填入此结构的相关字段中，应用程序可以从这里获得这些句柄。      
+如果一个进程想结束自己的生命，只要调用：   
+```c
+VOID ExitProcess(UINT fuExitCode);   
+```   
+就可以了。如果进程想结束另一个进程的生命，可以使用：    
+```c
+BOOL TerminateProcess(HANDLE hProcess, UINT fuExitCode);   
+```    
+我们完全可以通过TerminateProcess来结束一个进程的生命。但是这个函数并不建议被使用，因为一般进程结束时，系统会通知该进程所开启（所使用）的所有DLLs，但如果你以TerminateProcess 结束一个进程，系统不会做这件事。     
+之前说过：母进程与子进程之间可以有某些关系存在，但shell在调用CreateProcess时已经把母子之间的脐带关系剪断了，因此它们事实上是独立实例。   
+只要通过函数CloseHandle把子进程（的句柄）关闭，就能达到这个目的。   
+```c   
+PROCESS_INFORMATION ProcInfo;   
+BOOL fSuccess;    
+fSuccess = CreateProcess(...,&ProcInfo);    
+if (fSuccess)     
+{   
+	CloseHandle(ProcInfo.hThread);   
+	CloseHandle(ProcInfo.hProcess);   
+}    
+```    
