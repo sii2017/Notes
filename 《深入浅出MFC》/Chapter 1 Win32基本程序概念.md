@@ -200,3 +200,47 @@ if (fSuccess)
 	CloseHandle(ProcInfo.hProcess);   
 }    
 ```    
+### 一个执行线程的诞生与死亡
+程序代码的执行，是执行线程的工作。当一个进程建立起来，主执行线程也产生。所以每一个Windows程序一开始就有了一个执行线程。   
+我们可以调用CreateThread 产生额外的执行线程，系统会帮我们完成下列事情：   
+1. 配置「执行线程对象」，其handle 将成为CreateThread 的传回值。   
+2. 设定计数值为1。   
+3. 配置执行线程的context。   
+4. 保留执行线程的堆栈。   
+5. 将context 中的堆栈指针缓存器（SS）和指令指针缓存器（IP）设定妥当。   
+程序若欲产生一个新执行线程，调用CreateThread 即可办到：   
+```c
+CreateThread(LPSECURITY_ATTRIBUTES lpThreadAttributes,   
+DWORD dwStackSize,   
+LPTHREAD_START_ROUTINE lpStartAddress,   
+LPVOID lpParameter,   
+DWORD dwCreationFlags,    
+LPDWORD lpThreadId   
+);    
+```
+第一个参数表示安全属性的设定以及继承，请参考API 手册。Windows 95 忽略此一参数。    
+第二个参数设定堆栈的大小。   
+第三个参数设定「执行线程函数」名称，而该函数的参数则在这里的第四个参数设定。   
+第五个参数如果是0，表示让执行线程立刻开始执行，如果是CREATE_SUSPENDED ，则是要求执行线程暂停执行（那么我们必须调用
+ResumeThread才能令其重新开始）。   
+最后一个参数是个指向DWORD 的指针，系统会把执行线程的ID 放在这里。   
+以下为一个实例：  
+```c
+VOID ReadTime(VOID)   
+{   
+	char str[50];   
+	SYSTEMTIME st;   
+	while(1)  
+	{   
+		GetSystemTime(&st);    
+		sprintf(str,"%u:%u:%u", st.wHour, st.wMinute, st.wSecond);   
+		SetDlgItemText (_hWndDlg, IDE_TIMER, str);   
+		Sleep (1000); // 延迟一秒。   
+	}   
+}   
+
+int main()   
+{    
+	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ReadTime, NULL, 0, &ThreadID);   
+}    
+```   
