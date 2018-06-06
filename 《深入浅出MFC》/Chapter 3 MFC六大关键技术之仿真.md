@@ -259,4 +259,94 @@ void CRuntimeClass::Store(CArchive& ar) const
 }   
 ```   
 ### Message Mapping（消息映射）
-MFC 之中用来处理消息的C++ 类别，并不呈单鞭发展。作为application framework的重要架构之一的document/view，也具有处理消息的能力（你现在可能还不清楚什么是document/view，没有关系）。因此，消息藉以攀爬的路线应该有横流的机会：    
+一般来说，我们的类别库成立，我们将会设计，让消息从子类，慢慢向上传递，经由中间类，最后到基类，使消息以单鞭的形式经过所有的类别。   
+然而MFC之中用来处理消息的C++类别，并不呈单鞭发展。作为application framework的重要架构之一的document/view，也具有处理消息的能力（你现在可能还不清楚什么是document/view，没有关系）。因此，消息藉以攀爬的路线应该有横流的机会：    
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%B5%81%E5%8A%A8.jpg)    
+在这里，消息如何流动，我们暂时先不管。是直线前进，或是中途换跑道，我们都暂时不管，本节先把这个攀爬路线网建立起来再说。   
+这整个攀爬路线网就是所谓的消息映射表（Message Map）。将消息与表格中的元素比对，然后调用对应的处理代码，这种动作我们也称之为消息映射（Message Mapping）。    
+为了尽量降低对正常（一般）类别声明和定义的影响，我们希望，最好能够像RTTI和Dynamic Creation一样，用一两个宏就完成这巨大蜘蛛网的构造。最好能够像DECLARE\_DYNAMIC和IMPLEMENT\_DYNAMIC宏那么方便。   
+首先定义一个数据结构：   
+```c
+struct AFX_MSGMAP   
+{   
+	AFX_MSGMAP* pBaseMessageMap;   
+	AFX_MSGMAP_ENTRY* lpEntries;   
+};   
+//其中的AFX_MSGMAP_ENTRY又是另一个数据结构：    
+struct AFX_MSGMAP_ENTRY // MFC 4.0 format   
+{   
+	UINT nMessage; // windows message    
+	UINT nCode; // control code or WM_NOTIFY code   
+	UINT nID; // control ID (or 0 for windows messages)    
+	UINT nLastID; // used for entries specifying a range of control id's    
+	UINT nSig; // signature type (action) or pointer to message #      
+	AFX_PMSG pfn; //将要调用的函数指针
+};    
+//其中的AFX_PMSG 定义为函数指针：   
+typedef void (CCmdTarget::*AFX_PMSG)(void);    
+```
+然后就是定义一个与DECLARE\_DYNAMIC和IMPLEMENT\_DYNAMIC类似的宏了：   
+```c
+#define DECLARE_MESSAGE_MAP() \   
+static AFX_MSGMAP_ENTRY _messageEntries[]; \   
+static AFX_MSGMAP messageMap; \   
+virtual AFX_MSGMAP* GetMessageMap() const;   
+```   
+这个数据结构的内容填塞工作由三个宏完成：   
+```c
+#define BEGIN_MESSAGE_MAP(theClass, baseClass) \   
+AFX_MSGMAP* theClass::GetMessageMap() const \  
+{ return &theClass::messageMap; } \   
+AFX_MSGMAP theClass::messageMap = \   
+{ &(baseClass::messageMap), \   
+(AFX_MSGMAP_ENTRY*) &(theClass::_messageEntries) }; \     
+AFX_MSGMAP_ENTRY theClass::_messageEntries[] = \   
+{   
+#define ON_COMMAND(id, memberFxn) \   
+{ WM_COMMAND, 0, (WORD)id, (WORD)id, AfxSig_vv, (AFX_PMSG)memberFxn },   
+#define END_MESSAGE_MAP() \   
+{ 0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 } \     
+};    
+```
+**以CView 为例，下面的代码：**   
+```c
+// in header file  
+class CView : public CWnd   
+{   
+public:    
+	//...   
+	DECLARE_MESSAGE_MAP()   
+};  
+// in implementation file   
+#define CViewid 122  
+...   
+BEGIN_MESSAGE_MAP(CView, CWnd)    
+ON_COMMAND(CViewid, 0)   
+END_MESSAGE_MAP()       
+```   
+展开后则是：   
+```c
+// in header file   
+class CView : public CWnd   
+{   
+public:   
+	//...   
+	static AFX_MSGMAP_ENTRY _messageEntries[];    
+	static AFX_MSGMAP messageMap;   
+	virtual AFX_MSGMAP* GetMessageMap() const;   
+};   
+// in implementation file    
+#define CViewid 122  //定义了一下号码，在_messageEntries中使用     
+AFX_MSGMAP* CView::GetMessageMap() const  
+{ return &CView::messageMap; }   
+AFX_MSGMAP CView::messageMap =   
+{ &(CWnd::messageMap),
+(AFX_MSGMAP_ENTRY*) &(CView::_messageEntries) };//指针指向基类的messageMap     
+AFX_MSGMAP_ENTRY CView::_messageEntries[] =   
+{    
+	{ WM_COMMAND, 0, (WORD)122, (WORD)122, 1, (AFX_PMSG)0 },    
+	{ 0, 0, 0, 0, 0, (AFX_PMSG)0 }   
+};    
+```    
+以图表示则为：    
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%98%A0%E5%B0%84%E4%BB%BF%E7%9C%9F.png)   
