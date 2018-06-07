@@ -345,8 +345,12 @@ AFX_MSGMAP CView::messageMap =
 AFX_MSGMAP_ENTRY CView::_messageEntries[] =   
 {    
 	{ WM_COMMAND, 0, (WORD)122, (WORD)122, 1, (AFX_PMSG)0 },    
-	{ 0, 0, 0, 0, 0, (AFX_PMSG)0 }   
+	{ 0, 0, 0, 0, 0, (AFX_PMSG)0 }   //这里的（AFX_PMSG)应该是关联的函数指针，这里为0说明没有关联函数指针。   
 };    
 ```    
 以图表示则为：    
-![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%98%A0%E5%B0%84%E4%BB%BF%E7%9C%9F.png)   
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%98%A0%E5%B0%84%E4%BB%BF%E7%9C%9F.png) 
+### Command Routing（命令绕行）
+这节做了一个代码测试，得出的结论如下：  
+1 如果是一般的Windows 消息（WM_xxx），一定是由衍生类别流向基础类别，没有旁流的可能。   
+2 如果是命令消息WM_COMMAND，就有奇特的路线了（会旁流），但是具体的逻辑在本节尚不清楚。    
