@@ -87,6 +87,99 @@ pApp->m_nCmdShow = nCmdShow;
 ```   
 并对线程做了一些初始化的处理。   
 ### InitApplication函数
-AfxWinMain中第二个函数是InitApplication。  
+AfxWinMain中第二个函数是InitApplication。    
+如之前所说，根据多态，实际调用的是：  
+```c
+CWinApp::InitApplication();   
+```   
+在这个函数的实现中，做了一些MFC为了内部管理而做的动作。   
+### InitInstance
+AfxWinMain中第三个函数是InitInstance。  
+该函数在CMyWinApp中改写了。  
+```c
+BOOL CMyWinApp::InitInstance()   
+{   
+	m_pMainWnd = new CMyFrameWnd();   
+	m_pMainWnd->ShowWindow(m_nCmdShow);  
+	m_pMainWnd->UpdateWindow();  
+	return TRUE;   
+}    
+```   
+> 注意：应用程序一定要改写虚拟函数InitInstance，因为它在CWinApp 中只是个空函数，没有任何内建（预设）动作。   
+> ㆒般而言，CMyWinApp只改写CWinApp㆗的InitInstance，通常它不改寫 InitApplication和Run。   
+### new CMyFrameWnd()
+在改写的InitInstance中下一步调用的new CMyFrameWnd()将引发构造函数，该构造函数是由程序员改写父类的虚函数。   
+```c
+CMyFrameWnd::CMyFrameWnd   
+{    
+	Create(NULL, "Hello MFC", WS_OVERLAPPEDWINDOW, rectDefault, NULL, "MainMenu");    
+}
+```   
+其中Create 是CFrameWnd 的成员函数，它将产生一个窗口。但，使用哪一个窗口类别呢？实际上就在该函数中，继续看下去：   
+```c
+BOOL Create( LPCTSTR lpszClassName,  
+LPCTSTR lpszWindowName,   
+DWORD dwStyle = WS_OVERLAPPEDWINDOW,   
+const RECT& rect = rectDefault,  
+CWnd* pParentWnd = NULL,   
+LPCTSTR lpszMenuName = NULL,   
+DWORD dwExStyle = 0,   
+CCreateContext* pContext = NULL )    
+{   
+	HMENU hMenu = NULL;   
+	if (lpszMenuName != NULL)  
+	{   
+		HINSTANCE hInst = AfxFindResourceHandle(lpszMenuName, RT_MENU);    
+		hMenu = ::LoadMenu(hInst, lpszMenuName);//读取菜单
+	}   
+
+	m_strTitle = lpszWindowName;    
+
+	CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, pParentWnd->GetSafeHwnd(), hMenu, (LPVOID)pContext);   
+
+	return TRUE;   
+}    
+```
+该函数中先读取了菜单项，然后再次调用了一个CreateEx函数，再继续看进去：  
+```c
+BOOL CWnd::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle,
+int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam)   
+{  
+	CREATESTRUCT cs;   
+	cs.dwExStyle = dwExStyle;  
+	cs.lpszClass = lpszClassName;   
+	cs.lpszName = lpszWindowName;  
+	cs.style = dwStyle;  
+	cs.x = x;   
+	cs.y = y;   
+	cs.cx = nWidth;   
+	cs.cy = nHeight;   
+	cs.hwndParent = hWndParent;   
+	cs.hMenu = nIDorHMenu;  
+	cs.hInstance = AfxGetInstanceHandle();   
+	cs.lpCreateParams = lpParam;   
+
+	PreCreateWindow(cs);//下一个看他   
+	AfxHookWindowCreate(this);     
+	HWND hWnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);    
+	//...   
+}   
+
+BOOL CFrameWnd::PreCreateWindow(CREATESTRUCT& cs)   
+{  
+	if (cs.lpszClass == NULL)   
+	{   
+		AfxDeferRegisterClass(AFX_WNDFRAMEORVIEW_REG);   
+		cs.lpszClass = _afxWndFrameOrView;     
+	}   
+	//...      
+}    
+```    
+其中AfxDeferRegisterClass是一个定义于AFXIMPL.H 中的宏。   
+这个宏表示，如果变量afxRegisteredClasses的值显示系统已经注册了fClass这种视窗类别，MFC就啥也不做；否则就调用AfxEndDeferRegisterClass(fClass)准备注册之。afxRegisteredClasses 定义于AFXWIN.H，是一个旗标变量，用来记录已经注册了哪些视窗类别。   
+到这里我们就比较清楚了。不同类别的PreCreateWindow 成员函数都是在窗口产生之前一刻被调用，准备用来注册窗口类别。如果我们指定的窗口类别是NULL，那么就使用系统预设类别。    
+### 窗口的显示与更新
+当我们完成了Create注册并创建了窗口，那么后面就是显示和更新窗口了。   
+P454
 ### CFrameWnd 取代 WndProc
 在c中传统的窗口消息处理函数也不见了，在mfc中我们使用**消息映射**来处理消息。   
