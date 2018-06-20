@@ -180,6 +180,31 @@ BOOL CFrameWnd::PreCreateWindow(CREATESTRUCT& cs)
 到这里我们就比较清楚了。不同类别的PreCreateWindow 成员函数都是在窗口产生之前一刻被调用，准备用来注册窗口类别。如果我们指定的窗口类别是NULL，那么就使用系统预设类别。    
 ### 窗口的显示与更新
 当我们完成了Create注册并创建了窗口，那么后面就是显示和更新窗口了。   
-P454
+调用ShowWindow函数令窗口显示出来，并调用UpdateWindow函数令Hello程序送出WM_PAINT消息。   
+消息是怎么处理的呢？我们继续看下去。   
+### Run()  
+绕了一圈再回到AfxWinMain中：  
+```c
+int AFXAPI AfxWinMain (...)  
+{  
+	CWinApp* pApp = AfxGetApp();  
+	AfxWinInit(...);   
+	pApp->InitApplication();     
+	pApp->InitInstance();  
+	nReturnCode = pApp->Run();//接下来是这里   
+	AfxWinTerm();   
+}  
+```    
+Hello 程序进行到这里，窗口类别注册好了，窗口诞生并显示出来了，UpdateWindow 被调用，使得消息队列中出现了一个WM_PAINT 消息，等待被处理。现在，执行的脚步到
+达pApp->Run。   
+由于多态，pApp指向的Run实际上调用的是CWinApp::Run()。   
+经过一层一层的包装，最内部可以找到与c中相同的TranslateMessage和DispatchMessage函数。而关于窗口消息处理函数，我们在之前注册窗口的时候就可以看到：  
+```c
+wndcls.lpfnWndProc = DefWindowProc;   
+```   
+> 注意，虽然窗口函数被指定为DefWindowProc 成员函数，但事实上消息并不是被发往该处，而是一个名为AfxWndProc的全域函数去。这其中牵扯到MFC暗中做了大挪移的手脚（利用hook 和subclassing），将在第９章详细讨论。   
+   
+WinMain 已由MFC 提供，窗口类别已由MFC 注册完成、连窗口函数也都由MFC提供。   
+作为程序员，处理消息只需要采用消息映射就可以了，也就是所谓的Message Map 机制。   
 ### CFrameWnd 取代 WndProc
 在c中传统的窗口消息处理函数也不见了，在mfc中我们使用**消息映射**来处理消息。   
