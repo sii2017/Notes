@@ -11,3 +11,146 @@ MFC把消息分为三大类：
 这种消息由控制组件产生，为的是向其父窗口（通常是对
 话盒）通知某种情况。例如当你在ListBox 上选择其中一个项目，ListBox 就会产生LBN_SELCHANGE 传送给父窗口。这类消息也是以WM_COMMAND 形
 式呈现。   
+### 消息映射表格
+「消息映射」是MFC 内建的一个消息分派机制，只要利用数个宏以及固定形式的写法，类似填表格，就可以让Framework 知道，一旦消息发生，该循哪一条路递送。每一个类别只能拥有一个消息映射表格，但也可以没有。   
+首先你必须在类别声明档（.H）声明拥有消息映射表格：  
+```c
+class CScribbleDoc : public CDocument  
+{  
+	...    
+	DECLARE_MESSAGE_MAP()   
+};  
+```   
+然后在类别实作档（.CPP）实现此一表格：   
+```c
+BEGIN_MESSAGE_MAP(CScribbleDoc, CDocument)  
+	//{{AFX_MSG_MAP(CScribbleDoc)   
+	ON_COMMAND(ID_EDIT_CLEAR_ALL, OnEditClearAll)  
+	ON_COMMAND(ID_PEN_THICK_OR_THIN, OnPenThickOrThin)   
+	//...  
+	//}}AFX_MSG_MAP   
+END_MESSAGE_MAP()   
+```  
+夹在BEGIN_ 和END_ 之中的宏，除了ON_COMMAND，还可以有许多种。但是标准的Windows消息并不需要由我们指定处理函数的名称。标准消息的处理函数，其名称也是「标准」的（预设的），像是：   
+![](https://github.com/sii2017/image/blob/master/%E6%A0%87%E5%87%86%E6%B6%88%E6%81%AF%E7%9A%84%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0.jpg)  
+随后我们一个一个宏来看。  
+### DECLARE_MESSAGE_MAP宏  
+```c
+// in AFXWIN.H  
+#define DECLAR\E_MESSAGE\_MAP() \  
+private: \   
+	static const AFX\_MSGMAP\_ENTRY \_messageEntries[]; \  
+protected: \   
+	static AFX\_DATA const AFX\_MSGMAP messageMap; \   
+	virtual const AFX_MSGMAP* GetMessageMap() const; \   
+//static 修饰词限制了资料的配置，使得每个「类别」仅有一份资料，而不是每一个「对象」各有一份资料。   
+
+//关于AFX_MSGMAP_ENTRY类型  
+struct AFX_MSGMAP_ENTRY  
+{   
+	UINT nMessage; // windows message   
+	UINT nCode; // control code or WM_NOTIFY code   
+	UINT nID; // control ID (or 0 for windows messages)  
+	UINT nLastID; // used for entries specifying a range of control id's   
+	UINT nSig; // signature type (action) or pointer to message #   
+	AFX_PMSG pfn; // routine to call (or special value)   
+};   
+
+//关于AFX_MSGMAP  
+struct AFX_MSGMAP  
+{  
+	const AFX\_MSGMAP* pBaseMap;  
+	const AFX\_MSGMAP_ENTRY* lpEntries;   
+};   
+```  
+可以看到AFX_MSGMAP_ENTRY类型的主要作用是，让消息nMessage 对应于函数pfn。  
+在AFX_MSGMAP中，pBaseMap 是一个指向「基础类别之消息映射表」的指针，它提供了一个走访整个继承串链的方法，有效地实作出消息映射的继承性。衍生类别将自动地「继承」其基础类别中所处理的消息。   
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%98%A0%E5%B0%84%E5%AE%8F.jpg)   
+### BEGIN\_ /ON\_/END\_三个宏
+在cpp文件中，我们使用了另外三个宏：  
+```c
+BEGIN_MESSAGE_MAP(CMyView, CView)  
+	ON_WM_PAINT()  
+	ON_WM_CREATE()   
+END_MESSAGE_MAP()   
+```   
+继续看源代码。  
+```c
+#define BEGIN_MESSAGE_MAP(theClass, baseClass) \   
+	const AFX_MSGMAP* theClass::GetMessageMap() const \  
+	{ return &theClass::messageMap; } \   
+	AFX_DATADEF const AFX_MSGMAP theClass::messageMap = \  
+	{ &baseClass::messageMap, &theClass::_messageEntries[0] }; \   
+	const AFX_MSGMAP_ENTRY theClass::_messageEntries[] = \   
+	{ \   
+#define END_MESSAGE_MAP() \   
+	{0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 } \  
+	}; \  
+
+#define ON_COMMAND(id, memberFxn) \    
+{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSig_vv, (AFX_PMSG)memberFxn },   
+#define ON_WM_CREATE() \  
+{ WM_CREATE, 0, 0, 0, AfxSig_is, \ 
+(AFX_PMSG)(AFX_PMSGW)(int (AFX_MSG_CALL CWnd::*)(LPCREATESTRUCT))OnCreate },   
+#define ON_WM_DESTROY() \  
+{ WM_DESTROY, 0, 0, 0, AfxSig_vv, \  
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(void))OnDestroy },  
+#define ON_WM_MOVE() \   
+{ WM_MOVE, 0, 0, 0, AfxSig_vvii, \   
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(int, int))OnMove },    
+#define ON_WM_SIZE() \  
+{ WM_SIZE, 0, 0, 0, AfxSig_vwii, \   
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(UINT, int, int))OnSize },  
+#define ON_WM_ACTIVATE() \   
+{ WM_ACTIVATE, 0, 0, 0, AfxSig_vwWb, \    
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(UINT, CWnd*,  
+BOOL))OnActivate },   
+#define ON_WM_SETFOCUS() \  
+{ WM_SETFOCUS, 0, 0, 0, AfxSig_vW, \   
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(CWnd*))OnSetFocus },    
+#define ON_WM_PAINT() \   
+{ WM_PAINT, 0, 0, 0, AfxSig_vv, \   
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(void))OnPaint },   
+#define ON_WM_CLOSE() \  
+{ WM_CLOSE, 0, 0, 0, AfxSig_vv, \    
+(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(void))OnClose },  
+...   
+```   
+于是这样的宏：  
+```c
+BEGIN_MESSAGE_MAP(CMyView, CView)  
+	ON_WM_CREATE()   
+	ON_WM_PAINT()  
+END_MESSAGE_MAP()   
+```  
+展开后是这样的：  
+```c
+const AFX_MSGMAP* CMyView::GetMessageMap() const  
+	{ return &CMyView::messageMap; }  
+AFX_DATADEF const AFX_MSGMAP CMyView::messageMap =
+{ &CView::messageMap, &CMyView::_messageEntries[0] };   
+const AFX_MSGMAP_ENTRY CMyView::_messageEntries[] =  
+{   
+	{ WM_CREATE, 0, 0, 0, AfxSig_is, \   
+	(AFX_PMSG)(AFX_PMSGW)(int (AFX_MSG_CALL CWnd::*)(LPCREATESTRUCT))OnCreate },   
+	{ WM_PAINT, 0, 0, 0, AfxSig_vv, \   
+	(AFX_PMSG)(AFX_PMSGW)(void (AFX_MSG_CALL CWnd::*)(void))OnPaint },   
+	{0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 }  
+};  
+```   
+用图片直观的来表示该宏的结果是这样的：  
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%98%A0%E5%B0%84%E5%AE%8F2.jpg)   
+如果这套系统用虚函数来实作，将会带来比较大的内存负担，因此没有使用虚函数的特性。   
+### 消息的流动
+CWnd::WindowProc 调用的OnWndMsg 是用来分辨并处理消息的专职机构：  
+如果是命令消息，就交给OnCommand 处理；  
+如果是通告消息（Notification），就交给OnNotify 处理；  
+WM_ACTIVATE 和WM_SETCURSOR 也都有特定的处理函数；   
+而一般的Windows 讯息，就直接在消息映射表中上溯，寻找其归宿（消息处理例程）。   
+为什么要特别区隔出命令消息WM_COMMAND 和通告消息WM_NOTIFY 两类呢？因为它们的上溯路径不是那么单纯地只往父类别去，它们可能需要拐个弯。   
+源码略。  
+### 直线上溯（一般为windows消息）
+直线上溯的逻辑很单纯，唯一做的动作就是比对消息映射表，如果吻合就调用表中项目所记录的函数。比对的对象有二，一个是原原本本的消息映射表，另一个是MFC为求快速所设计的一个cache（很复杂不多解释）。比对成功后，调用对应之函数时，有一个巨大的switch/case动作，那是为了确保类型安全。   
+以下是CMyView窗口发生的WM\_PAINT消息流动路线：   
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%B5%81%E5%8A%A8%E5%9B%BE.jpg)   
+### 拐弯上溯（一般为WM_COMMAND命令消息）
