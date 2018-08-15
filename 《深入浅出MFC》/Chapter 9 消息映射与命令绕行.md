@@ -154,3 +154,26 @@ WM_ACTIVATE 和WM_SETCURSOR 也都有特定的处理函数；
 以下是CMyView窗口发生的WM\_PAINT消息流动路线：   
 ![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E6%B5%81%E5%8A%A8%E5%9B%BE.jpg)   
 ### 拐弯上溯（一般为WM_COMMAND命令消息）
+当CMyFrameWnd 收到WM_COMMAND，消息唧筒尝试数种绕行路线，使命令消息有机会经过任何一个类别。   
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E7%BB%95%E8%A1%8C.jpg)   
+OnCmdMsg是各类别专门用来对付命令消息的函数。每一个「可接受命令消息之对象」在处理命令消息时都会（应该）遵循一个游戏规则：调用另一个目标类别的OnCmdMsg。这才能够将命令消息传送下去。如果说AfxWndProc 是消息流动的「唧筒」，各类别的OnCmdMsg 就是消息流动的「转辙器」。  
+以下举一个具体例子。假设命令消息从Scribble 的【Edit/Clear All】发出，其处理常式位在CScribbleDoc，下面是这个命令消息的流浪过程：   
+1. MDI 主窗口（ CMDIFrameWnd） 收到命令消息WM_COMMAND， 其ID 为ID_EDIT_CLEAR_ALL。   
+2. MDI 主窗口把命令消息交给目前作用中的MDI 子窗口（CMDIChildWnd）。   
+3. MDI 子窗口给它自己的子窗口（也就是View）一个机会。   
+4. View 检查自己的Message Map。   
+5. View 发现没有任何处理例程可以处理此命令消息，只好把它传给Document。    
+6. Document 检查自己的Message Map，它发现了一个吻合项：   
+```c
+BEGIN_MESSAGE_MAP(CScribbleDoc, CDocument)   
+	ON_COMMAND(ID_EDIT_CLEAR_ALL, OnEditClearAll)  
+	...  
+END_MESSAGE_MAP()   
+```
+于是调用该函数，命令消息的流动路线也告终止。   
+如果上述的步骤6 仍没有找到处理函数，那么就：   
+7. Document 把这个命令消息再送到Document Template对象去。   
+8. 还是没被处理，于是命令消息回到View。  
+9. View 没有处理，于是又回给MDI 子窗口本身。  
+10. 传给CWinApp 对象-- 无主消息的终极归属。   
+![](https://github.com/sii2017/image/blob/master/%E6%B6%88%E6%81%AF%E7%BB%95%E8%A1%8C2.jpg)   
